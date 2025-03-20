@@ -7,7 +7,7 @@
 ![GitHub Repo stars](https://img.shields.io/github/stars/ccfang2/fdid?style=social)
 
 
-> The R package `fdid` allows users to implement the method proposed in Fang and Liebl (2025)[^1]. In this paper, we present a novel functional perspective on Difference-in-Differences (DiD) that allows for honest inference using event study plots under violations of parallel trends and/or no-anticipation assumption. We use the algorithm of so-called fast and fair simultaneous confidence band from Liebl and Reimherr (2023)[^2] to construct the simultaneous band in our plots.
+> The R package `fdid` allows users to implement the method proposed in Fang and Liebl (2025)[^1]. In this paper, we present a novel functional perspective on Difference-in-Differences (DiD) that allows for honest inference using event study plots under violations of parallel trends and/or no-anticipation assumptions. We use the algorithm of so-called fast and fair simultaneous confidence band from Liebl and Reimherr (2023)[^2] to construct the simultaneous band in our plots.
 
 ## Installation
 
@@ -33,13 +33,13 @@ We first load the data from our package, and then we use the function `fdid_scb(
 
 ![Example 1](man/figures/plot_scb.png)
 
-The gray area indicates the time span over which the treatment effect is uniformly significant under our simultaneous confidence band. Traditional confidence intervals are also plotted. They fail to take into account the multiple testing problem, so they are typically narrower than our band. 
+The gray area indicates the time span over which the treatment effect is uniformly significant under our simultaneous confidence band. Traditional confidence intervals are also plotted. The intervals fail to take into account the multiple testing problem, so they are typically narrower than our band. 
 
-> **Note:** If you do not have estimates of event study coefficients and covariances, you may use our function `fdid()` to estimate them from using your original data. Our function allows the estimation under both non-staggered and staggered DiD designs. In particularly, we consider the negative weighting problem of estimating event study coefficients under staggered designs and use carefully chosen non-negative weights to sum up estimates from using different treatment subgroups.
+> **Note:** If you do not have estimates of event study coefficients and covariances, you may use our function `fdid()` to estimate them from using your original data. Our function allows the estimation under both non-staggered and staggered DiD designs. In particularly, we consider the negative weighting problem of estimating event study coefficients under staggered designs and use carefully chosen non-negative weights to sum up estimates from different treatment subgroups.
 
 ## Example 2: Honest Inference under Treatment anticipation
 
-Following Example 1, we now suppose, right after event time -2, there is an anticipation of treatment.
+Following Example 1, we now suppose that, right after event time -2, there is an anticipation of treatment.
 
 ``` r
 plot(fdid_scb_est, ta.t0=-2, legend="bottom")
@@ -47,11 +47,11 @@ plot(fdid_scb_est, ta.t0=-2, legend="bottom")
 
 ![Example 2](man/figures/plot_scb_ta.png)
 
-With an anticipation right after event time -2, one may see the time span over which the treatment effect is uniformly significant is shrinking. Under treatment anticipation, the null hypothesis for our test includes all values within the pink bounds.
+With an anticipation right after event time -2, one may see the time span over which the treatment effect is uniformly significant shrinks. Under treatment anticipation, the null hypothesis for our test includes all values within the pink bounds.
 
 ## Example 3: Honest Inference under Differential Trend of Functional Relative Magnitudes
 
-Following Example 1, we now suppose, there is differential trend of functional relative magnitudes with tuning parameter $\overline{M}=1$.
+Following Example 1, we now suppose that, there is differential trend of functional relative magnitudes with tuning parameter $\overline{M}=1$.
 
 ``` r
 plot(fdid_scb_est, frm.mbar=1, legend="bottom")
@@ -63,7 +63,7 @@ Under such a differential trend, the time span over which the treatment effect i
 
 ## Example 4: Honest Inference under Differential Trend of Functional Trend Restrictions
 
-Following Example 1, we now suppose, there is differential trend of functional trend restrictions with tuning parameter $M=2$.
+Following Example 1, we now suppose that, there is differential trend of functional trend restrictions with tuning parameter $M=2$.
 
 ``` r
 plot(fdid_scb_est, ftr.m=2, legend="bottom")

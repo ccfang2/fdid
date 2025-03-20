@@ -8,7 +8,7 @@
 #' greater than the minimal event time and no greater than 0. If it equals to 0, there is no anticipation.
 #' @param frm.mbar a numeric value of tuning parameter for functional relative magnitudes.
 #' @param ftr.m a numeric value of tuning parameter for functional trend restrictions.
-#' @param legend a logical value. If TRUE, a legend for honest inference is printed on the top of plot.
+#' @param legend a character value of "top" or "bottom" that indicates the position of legend. If NULL, the legend is not printed.
 #' @param ... Additional arguments to be passed to \link[base]{plot}.
 #'
 #' @return The function returns a plot with simultaneous confidence band for event study coefficients in a functional framework,
@@ -28,7 +28,7 @@
 #' fdid_scb_est <- fdid_scb(beta=LWdata$beta, cov=LWdata$cov, t0=LWdata$t0)
 #' plot(fdid_scb_est)
 #' plot(fdid_scb_est, frm.mbar=0.3)
-plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, legend=TRUE, ...) {
+plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, legend="top", ...) {
 
   # give out a warn
   warning("The inference result around event time 0 (i.e. between two event time closest to 0) should be treated with caution.")
@@ -42,6 +42,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, l
   if (!is.null(frm.mbar) && (!is.numeric(frm.mbar) || length(frm.mbar) != 1 || frm.mbar < 0)) stop("The input 'frm.mbar' should be either NULL or a numeric non-negative scalar.")
   if (!is.null(ftr.m) && (!is.numeric(ftr.m) || length(ftr.m) != 1 || ftr.m < 0)) stop("The input 'ftr.m' should be either NULL or a numeric non-negative scalar.")
   if (!is.null(frm.mbar) && !is.null(ftr.m)) stop("The input 'frm.mbar' and 'ftr.m' cannot take values simultaneously.")
+  if (!is.null(legend) && !legend %in% c("top", "bottom")) stop("The input 'legend' must be 'top', 'bottom', or NULL.")
 
   # extract data from object
   betahat <- object$data$beta[,1]
@@ -106,6 +107,37 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, l
           rect(roots_vec[i], y_range[1], roots_vec[i+1], y_range[2], col=rgb(0.5, 0.5, 0.5, alpha=0.4), border=NA)
         }
       }
+    }
+
+    # write a legend for the plot
+    if(!is.null(legend)) {
+
+      xlim <- par("usr")[1:2]
+      ylim <- par("usr")[3:4]
+
+      text              <- "Reference value          "
+      text_width        <- strwidth(text)
+      fixed_line_width  <- strwidth("Reference")
+      extra_padding     <- strwidth("   ", cex=1)
+      rect_width        <- text_width+extra_padding+fixed_line_width
+      rect_height       <- diff(ylim)*0.08
+      rect_x1           <- mean(xlim)-rect_width/2
+      rect_x2           <- mean(xlim)+rect_width/2
+
+      if(legend=="top")    {rect_y2 <- ylim[2]-rect_height*0.5; rect_y1 <- rect_y2-rect_height}
+      if(legend=="bottom") {rect_y2 <- ylim[1]+rect_height*0.5; rect_y1 <- rect_y2+rect_height}
+
+      rect(rect_x1, rect_y1, rect_x2, rect_y2, col = "white", border = "black")
+
+      left_padding <- rect_width*0.05
+      line_x1      <- rect_x1+left_padding
+      line_x2      <- rect_x1+left_padding+fixed_line_width
+
+      if(legend=="top")    {line_y <- rect_y1+rect_height*0.4}
+      if(legend=="bottom") {line_y <- rect_y1-rect_height*0.4}
+
+      segments(line_x1, line_y, line_x2, line_y, col = "red", lwd = 4, lty = 3)
+      text(line_x2 + left_padding, line_y, text, cex = 1, adj = 0)
     }
   } else {
 
@@ -280,14 +312,14 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, l
     }
 
     # write a legend for the plot
-    if(isTRUE(legend)) {
+    if(!is.null(legend)) {
 
       xlim <- par("usr")[1:2]
       ylim <- par("usr")[3:4]
 
-      if (ta.t0!=0 & (!is.null(frm.mbar) | !is.null(ftr.m))) {upper_text <- "Reference values with anticipation and PT violations"; lower_text <- "Reference values without anticipation or PT violations          "}
-      if (ta.t0==0 & (!is.null(frm.mbar) | !is.null(ftr.m))) {upper_text <- "Reference values with PT violations"; lower_text <- "Reference values without PT violations          "}
-      if (ta.t0!=0 & is.null(frm.mbar) & is.null(ftr.m)) {upper_text <- "Reference values with anticipation"; lower_text <- "Reference values without anticipation          "}
+      if (ta.t0!=0 & (!is.null(frm.mbar) | !is.null(ftr.m))) {upper_text <- "Reference values with anticipation and PT violations"; lower_text <- "Reference value without anticipation or PT violations          "}
+      if (ta.t0==0 & (!is.null(frm.mbar) | !is.null(ftr.m))) {upper_text <- "Reference values with PT violations"; lower_text <- "Reference value without PT violations          "}
+      if (ta.t0!=0 & is.null(frm.mbar) & is.null(ftr.m)) {upper_text <- "Reference values with anticipation"; lower_text <- "Reference value without anticipation          "}
 
       text_width_upper   <- strwidth(upper_text) # calculate the width of the text dynamically
       text_width_lower   <- strwidth(lower_text)
@@ -298,23 +330,27 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, l
       rect_height        <- diff(ylim)*0.1 # define the height for the white rectangle (A)
       rect_x1            <- mean(xlim)-rect_width/2 # define positions for the white rectangle A (centered)
       rect_x2            <- mean(xlim)+rect_width/2
-      rect_y2            <- ylim[2]-rect_height*0.5
-      rect_y1            <- rect_y2-rect_height
+
+      if(legend=="top")    {rect_y2 <- ylim[2]-rect_height*0.5; rect_y1 <- rect_y2-rect_height}
+      if(legend=="bottom") {rect_y2 <- ylim[1]+rect_height*0.5; rect_y1 <- rect_y2+rect_height}
 
       rect(rect_x1, rect_y1, rect_x2, rect_y2, col = "white", border = "black") # draw white rectangular A with black border
 
       left_padding <- rect_width*0.05 # define padding to prevent touching the left border
       rect_b_x1    <- rect_x1+left_padding  # position and draw the fixed-width red rectangle B (aligned with upper text)
       rect_b_x2    <- rect_b_x1+fixed_rect_b_width
-      rect_b_y2    <- rect_y2-rect_height*0.15
-      rect_b_y1    <- rect_b_y2-rect_height*0.35
+
+      if(legend=="top")    {rect_b_y2 <- rect_y2-rect_height*0.15; rect_b_y1 <- rect_b_y2-rect_height*0.35}
+      if(legend=="bottom") {rect_b_y2 <- rect_y2+rect_height*0.15; rect_b_y1 <- rect_b_y2+rect_height*0.35}
 
       rect(rect_b_x1, rect_b_y1, rect_b_x2, rect_b_y2, col = rgb(1, 0, 0, alpha = 0.3), border = NA)  # draw red rectangle B (transparent, no border)
       text(rect_b_x2 + left_padding, (rect_b_y1 + rect_b_y2) / 2, upper_text, cex = 1,  adj = 0)  # add upper text next to red rectangle B
 
       line_x1 <- rect_b_x1  # define position for the red dashed line (aligned with lower text) # same as red rectangle start
       line_x2 <- rect_b_x2  # same fixed width as red rectangle
-      line_y  <- rect_y1+rect_height*0.3
+
+      if(legend=="top")    {line_y <- rect_y1+rect_height*0.3}
+      if(legend=="bottom") {line_y <- rect_y1-rect_height*0.3}
 
       segments(line_x1, line_y, line_x2, line_y, col = "red", lwd = 4, lty = 3)  # draw the red dashed line (fixed width)
       text(line_x2 + left_padding, line_y, lower_text, cex = 1, adj = 0)  # add lower text next to the red dashed line

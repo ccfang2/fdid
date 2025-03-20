@@ -10,7 +10,7 @@
   ta.t0 = 0,
   frm.mbar = NULL,
   ftr.m = NULL,
-  legend = TRUE,
+  legend = "top",
   ...
 )
 }
@@ -26,7 +26,7 @@ greater than the minimal event time and no greater than 0. If it equals to 0, th
 
 \item{ftr.m}{a numeric value of tuning parameter for functional trend restrictions.}
 
-\item{legend}{a logical value. If TRUE, a legend for honest inference is printed on the top of plot.}
+\item{legend}{a character value of "top" or "bottom" that indicates the position of legend. If NULL, the legend is not printed.}
 
 \item{...}{Additional arguments to be passed to \link[base]{plot}.}
 }

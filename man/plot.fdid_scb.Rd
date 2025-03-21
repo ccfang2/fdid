@@ -10,6 +10,7 @@
   ta.t0 = 0,
   frm.mbar = NULL,
   ftr.m = NULL,
+  frmtr.mbar = NULL,
   legend = "top",
   ...
 )
@@ -25,6 +26,8 @@ greater than the minimal event time and no greater than 0. If it equals to 0, th
 \item{frm.mbar}{a numeric value of tuning parameter for functional relative magnitudes.}
 
 \item{ftr.m}{a numeric value of tuning parameter for functional trend restrictions.}
+
+\item{frmtr.mbar}{a numeric value of tuning parameter for combining functional relative magnitudes and functional trend restrictions.}
 
 \item{legend}{a character value of "top" or "bottom" that indicates the position of legend. If NULL, the legend is not printed.}
 

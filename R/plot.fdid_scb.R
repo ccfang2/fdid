@@ -8,6 +8,7 @@
 #' greater than the minimal event time and no greater than 0. If it equals to 0, there is no anticipation.
 #' @param frm.mbar a numeric value of tuning parameter for functional relative magnitudes.
 #' @param ftr.m a numeric value of tuning parameter for functional trend restrictions.
+#' @param frmtr.mbar a numeric value of tuning parameter for combining functional relative magnitudes and functional trend restrictions.
 #' @param legend a character value of "top" or "bottom" that indicates the position of legend. If NULL, the legend is not printed.
 #' @param ... Additional arguments to be passed to \link[base]{plot}.
 #'
@@ -28,7 +29,7 @@
 #' fdid_scb_est <- fdid_scb(beta=LWdata$beta, cov=LWdata$cov, t0=LWdata$t0)
 #' plot(fdid_scb_est)
 #' plot(fdid_scb_est, frm.mbar=0.3)
-plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, legend="top", ...) {
+plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, frmtr.mbar=NULL, legend="top", ...) {
 
   # give out a warn
   warning("The inference result around event time 0 (i.e. between two event time closest to 0) should be treated with caution.")
@@ -41,7 +42,8 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, l
   if(!(ta.t0 %in% object$scb$event_t[which(object$scb$event_t<=0)][-1])) stop("The input 'ta.t0' should be greater than the minimal event time and no greater than 0.")
   if (!is.null(frm.mbar) && (!is.numeric(frm.mbar) || length(frm.mbar) != 1 || frm.mbar < 0)) stop("The input 'frm.mbar' should be either NULL or a numeric non-negative scalar.")
   if (!is.null(ftr.m) && (!is.numeric(ftr.m) || length(ftr.m) != 1 || ftr.m < 0)) stop("The input 'ftr.m' should be either NULL or a numeric non-negative scalar.")
-  if (!is.null(frm.mbar) && !is.null(ftr.m)) stop("The input 'frm.mbar' and 'ftr.m' cannot take values simultaneously.")
+  if (!is.null(frmtr.mbar) && (!is.numeric(frmtr.mbar) || length(frmtr.mbar) != 1 || frmtr.mbar < 0)) stop("The input 'frmtr.mbar' should be either NULL or a numeric non-negative scalar.")
+  if (!is.null(frm.mbar) && !is.null(ftr.m) && !is.null(frmtr.mbar)) stop("Exactly one of inputs 'frm.mbar', 'ftr.m' and 'frmtr.mbar' can have a value, or all three are NULL.")
   if (!is.null(legend) && !legend %in% c("top", "bottom")) stop("The input 'legend' must be 'top', 'bottom', or NULL.")
 
   # extract data from object
@@ -60,7 +62,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, l
   end   <- max(object$data$beta[,2])
 
   # regular statistical inference
-  if (ta.t0==0 & is.null(frm.mbar) & is.null(ftr.m)) {
+  if (ta.t0==0 & is.null(frm.mbar) & is.null(ftr.m) & is.null(frmtr.mbar)) {
 
     # find the time spans of statistical significance
     num_cores <- parallel::detectCores() - 1
@@ -142,7 +144,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, l
   } else {
 
     # honest inference
-    if(is.null(frm.mbar) & is.null(ftr.m)) {
+    if(is.null(frm.mbar) & is.null(ftr.m) & is.null(frmtr.mbar)) {
 
       if(ta.t0==0) {ta.alpha <- 1} else {ta.alpha <- 0.05}
 
@@ -157,7 +159,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, l
 
     }
 
-    if(!is.null(frm.mbar) & is.null(ftr.m)) {
+    if(!is.null(frm.mbar) & is.null(ftr.m) & is.null(frmtr.mbar)) {
 
       if(ta.t0==0) {ta.alpha <- 1} else {ta.alpha <- 0.05}
       ta_ub <- betahat[which(timeVec==ta.t0)]+qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment/post-anticipation periods
@@ -173,7 +175,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, l
       frm_ub_ta_lb <- function (x) {ifelse(x>=ta.t0, frm.mbar*mean_abs_deriv*(x-ta.t0)+ta_lb, NA)}
       frm_lb_ta_lb <- function (x) {ifelse(x>=ta.t0, -frm.mbar*mean_abs_deriv*(x-ta.t0)+ta_lb, NA)}
 
-      x_vals <- seq(start, end, length.out = 5*length(timeVec)  )
+      x_vals <- seq(start, end, length.out = 5*length(timeVec))
 
       if (ta.t0!=0) {
         honest_ub_vals <- apply(cbind(ta_ub, frm_ub_ta_ub(x_vals), frm_ub_ta_lb(x_vals)), 1,  function(row) max(row,na.rm=TRUE))
@@ -189,7 +191,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, l
     }
 
 
-    if( is.null(frm.mbar) & !is.null(ftr.m) ){
+    if(is.null(frm.mbar) & !is.null(ftr.m) & is.null(frmtr.mbar)) {
 
       if(ta.t0==0) {ta.alpha <- 1} else {ta.alpha <- 0.05}
       ta_ub <- betahat[which(timeVec==ta.t0)]+qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
@@ -205,7 +207,39 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, l
       ftr_ub_ta_lb <- function (x) {ifelse(x>=ta.t0, (ftr.m*abs(slope)+slope)*(x-ta.t0)+ta_lb, NA)}
       ftr_lb_ta_lb <- function (x) {ifelse(x>=ta.t0, (-ftr.m*abs(slope)+slope)*(x-ta.t0)+ta_lb, NA)}
 
-      x_vals <- seq(start, end, length.out=5*length(timeVec)  )
+      x_vals <- seq(start, end, length.out=5*length(timeVec))
+
+      if (ta.t0!=0) {
+        honest_ub_vals <- apply(cbind(ta_ub, ftr_ub_ta_ub(x_vals), ftr_ub_ta_lb(x_vals)), 1,  function(row) max(row,na.rm=TRUE))
+        honest_lb_vals <- apply(cbind(ta_lb, ftr_lb_ta_ub(x_vals), ftr_lb_ta_lb(x_vals)), 1,  function(row) min(row,na.rm=TRUE))
+      } else {
+        honest_ub_vals <- apply(cbind(ftr_ub_ta_ub(x_vals), ftr_ub_ta_lb(x_vals)), 1,  function(row) if (all(is.na(row))) 0 else max(row,na.rm=TRUE))
+        honest_lb_vals <- apply(cbind(ftr_lb_ta_ub(x_vals), ftr_lb_ta_lb(x_vals)), 1,  function(row) if (all(is.na(row))) 0 else min(row,na.rm=TRUE))
+      }
+      honest_ub_splinefun <- splinefun(x=x_vals, y=honest_ub_vals, method="natural")
+      honest_lb_splinefun <- splinefun(x=x_vals, y=honest_lb_vals, method="natural")
+      honest_ub_splinefun <- Vectorize(honest_ub_splinefun)
+      honest_lb_splinefun <- Vectorize(honest_lb_splinefun)
+    }
+
+    if(is.null(frm.mbar) & is.null(ftr.m) & !is.null(frmtr.mbar)) {
+
+      if(ta.t0==0) {ta.alpha <- 1} else {ta.alpha <- 0.05}
+      ta_ub <- betahat[which(timeVec==ta.t0)]+qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
+      ta_lb <- betahat[which(timeVec==ta.t0)]-qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
+
+      # frmtr bounds
+      ts             <- seq(start, ta.t0, length.out=50*sum(timeVec<=ta.t0))
+      betas_deriv    <- pracma::fderiv(betahat_splinefun, ts, n=1, method="backward")
+      mean_abs_deriv <- mean(abs(betas_deriv))
+      slope       <- mean(betas_deriv)
+
+      ftr_ub_ta_ub <- function (x) {ifelse(x>=ta.t0, (frmtr.mbar*mean_abs_deriv+slope)*(x-ta.t0)+ta_ub, NA)}
+      ftr_lb_ta_ub <- function (x) {ifelse(x>=ta.t0, (-frmtr.mbar*mean_abs_deriv+slope)*(x-ta.t0)+ta_ub, NA)}
+      ftr_ub_ta_lb <- function (x) {ifelse(x>=ta.t0, (frmtr.mbar*mean_abs_deriv+slope)*(x-ta.t0)+ta_lb, NA)}
+      ftr_lb_ta_lb <- function (x) {ifelse(x>=ta.t0, (-frmtr.mbar*mean_abs_deriv+slope)*(x-ta.t0)+ta_lb, NA)}
+
+      x_vals <- seq(start, end, length.out=5*length(timeVec))
 
       if (ta.t0!=0) {
         honest_ub_vals <- apply(cbind(ta_ub, ftr_ub_ta_ub(x_vals), ftr_ub_ta_lb(x_vals)), 1,  function(row) max(row,na.rm=TRUE))
@@ -317,9 +351,9 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, l
       xlim <- par("usr")[1:2]
       ylim <- par("usr")[3:4]
 
-      if (ta.t0!=0 & (!is.null(frm.mbar) | !is.null(ftr.m))) {upper_text <- "Reference values with anticipation and PT violations"; lower_text <- "Reference value without anticipation or PT violations          "}
-      if (ta.t0==0 & (!is.null(frm.mbar) | !is.null(ftr.m))) {upper_text <- "Reference values with PT violations"; lower_text <- "Reference value without PT violations          "}
-      if (ta.t0!=0 & is.null(frm.mbar) & is.null(ftr.m)) {upper_text <- "Reference values with anticipation"; lower_text <- "Reference value without anticipation          "}
+      if (ta.t0!=0 & (!is.null(frm.mbar) | !is.null(ftr.m) | !is.null(frmtr.mbar))) {upper_text <- "Reference values with anticipation and PT violations"; lower_text <- "Reference value without anticipation or PT violations          "}
+      if (ta.t0==0 & (!is.null(frm.mbar) | !is.null(ftr.m) | !is.null(frmtr.mbar))) {upper_text <- "Reference values with PT violations"; lower_text <- "Reference value without PT violations          "}
+      if (ta.t0!=0 & is.null(frm.mbar) & is.null(ftr.m) & is.null(frmtr.mbar)) {upper_text <- "Reference values with anticipation"; lower_text <- "Reference value without anticipation          "}
 
       text_width_upper   <- strwidth(upper_text) # calculate the width of the text dynamically
       text_width_lower   <- strwidth(lower_text)
@@ -341,7 +375,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, l
       rect_b_x2    <- rect_b_x1+fixed_rect_b_width
 
       if(legend=="top")    {rect_b_y2 <- rect_y2-rect_height*0.15; rect_b_y1 <- rect_b_y2-rect_height*0.35}
-      if(legend=="bottom") {rect_b_y2 <- rect_y2+rect_height*0.15; rect_b_y1 <- rect_b_y2+rect_height*0.35}
+      if(legend=="bottom") {rect_b_y2 <- rect_y1-rect_height*0.5; rect_b_y1 <- rect_b_y2+rect_height*0.35}
 
       rect(rect_b_x1, rect_b_y1, rect_b_x2, rect_b_y2, col = rgb(1, 0, 0, alpha = 0.3), border = NA)  # draw red rectangle B (transparent, no border)
       text(rect_b_x2 + left_padding, (rect_b_y1 + rect_b_y2) / 2, upper_text, cex = 1,  adj = 0)  # add upper text next to red rectangle B
@@ -350,7 +384,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, l
       line_x2 <- rect_b_x2  # same fixed width as red rectangle
 
       if(legend=="top")    {line_y <- rect_y1+rect_height*0.3}
-      if(legend=="bottom") {line_y <- rect_y1-rect_height*0.3}
+      if(legend=="bottom") {line_y <- rect_y2+rect_height*0.3}
 
       segments(line_x1, line_y, line_x2, line_y, col = "red", lwd = 4, lty = 3)  # draw the red dashed line (fixed width)
       text(line_x2 + left_padding, line_y, lower_text, cex = 1, adj = 0)  # add lower text next to the red dashed line

@@ -39,15 +39,15 @@ The gray area indicates the time span over which the treatment effect is uniform
 
 ## Example 2: Honest Inference under Treatment anticipation
 
-Following Example 1, we now suppose that, right after event time -2, there is an anticipation of treatment.
+Following Example 1, we now suppose that, right after event time -3, there is an anticipation of treatment.
 
 ``` r
-plot(fdid_scb_est, ta.t0=-2, legend="bottom")
+plot(fdid_scb_est, ta.t0=-3, legend="bottom")
 ```
 
 ![Example 2](man/figures/plot_scb_ta.png)
 
-With an anticipation right after event time -2, one may see the time span over which the treatment effect is uniformly significant shrinks. Under treatment anticipation, the null hypothesis for our test includes all values within the pink bounds.
+With an anticipation right after event time -3, one may see the time span over which the treatment effect is uniformly significant shrinks. Under treatment anticipation, the null hypothesis for our test includes all values within the pink bounds.
 
 ## Example 3: Honest Inference under Differential Trend of Functional Relative Magnitudes
 

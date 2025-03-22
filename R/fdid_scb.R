@@ -55,7 +55,7 @@ fdid_scb <- function(object=NULL,
   if (!is.null(cov) && !is.matrix(cov)) stop("The input 'cov' should be eitherNULL or a matrix.")
   if (is.null(cov) && is.null(object)) stop("If any of 'beta', 'cov' and 't0' is NULL, 'object' must be provided.")
   if (!is.null(t0) && (!is.numeric(t0) || length(t0) != 1)) stop("The input 't0' should be either NULL or a numeric scalar.")
-  if (!is.null(df) && (!is.numeric(df) || length(df) != 1 || df <= 0 || !is.numeric(df))) stop("The input 'df' should be either NULL or a positive integer scalar.")
+  if (!is.null(df) && (!is.numeric(df) || length(df) != 1 || df <= 0)) stop("The input 'df' should be either NULL or a positive integer scalar.")
 
   # extract data
   if(is.null(object)) {

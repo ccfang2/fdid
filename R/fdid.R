@@ -5,11 +5,10 @@
 #'
 #' @param data a data frame in which the first variable should be the outcome variable, and the last two variables are time and unit indices. Covariates are placed
 #' after the outcome but before time and unit variables. Outcome and covariates should be numeric.
-#' @param treatment a data frame that indicates the reference time for each unit, i.e. the time right after which a treatment effect is present. NA implies that the
-#' unit is never treated/control.
+#' @param treatment a data frame that indicates the time, right after the treatment is given, for each unit. NA implies that the unit is never treated/control.
 #'
 #' @return The \code{fdid} function returns a list which includes the estimates of event study coefficients and their covariance. It also contains the estimates of
-#' time-invariant coefficients for covariates and their standard errors at each period. In the output, the event time 0 is taken as the reference time. The output is
+#' time-invariant coefficients for covariates and their standard errors at each period. In the output, the event time 0 is considered as the reference time. The output is
 #' an object of S3 class \code{"fdid"}.
 #' @import dplyr
 #' @export
@@ -123,7 +122,7 @@ fdid <- function(data,
     # extract the output directly in non-staggered design with only one t0
     fdid_nonstagger_list[[1]]$beta$coef[,"t"]     <- round(fdid_nonstagger_list[[1]]$beta$coef[,"t"]-t0_unique[1], 6)
     colnames(fdid_nonstagger_list[[1]]$beta$coef) <- c("beta", "event_t")
-    final_output                                  <- fdid_nonstagger_list[[1]]
+    final_output                                  <- append(fdid_nonstagger_list[[1]], list(t0=0))
 
   } else {
 
@@ -171,11 +170,17 @@ fdid <- function(data,
     cov_beta_stagger <- cov_beta_stagger*na_indicator
 
     # collect all estimates of xi and its standard errors
-    xi_list <- lapply(fdid_nonstagger_list, function(x) x$xi)
+    if(length(fdid_nonstagger_list[[1]])!=1) {xi_list <- lapply(fdid_nonstagger_list, function(x) x$xi)}
 
     # final output
-    final_output <- list(beta=list(coef= beta_stagger, cov=cov_beta_stagger),
-                         xi=xi_list)
+    final_output <- if(length(fdid_nonstagger_list[[1]])!=1) {
+      list(beta=list(coef= beta_stagger, cov=cov_beta_stagger),
+           xi=xi_list,
+           t0=0)
+      } else {
+      list(beta=list(coef= beta_stagger, cov=cov_beta_stagger),
+           t0=0)
+      }
     }
 
   class(final_output) <- "fdid"

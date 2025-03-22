@@ -7,7 +7,7 @@
 \method{plot}{fdid_scb}(
   object,
   ci = TRUE,
-  ta.t0 = 0,
+  ta.t0 = NULL,
   frm.mbar = NULL,
   ftr.m = NULL,
   frmtr.mbar = NULL,
@@ -21,7 +21,7 @@
 \item{ci}{a logical value. If TRUE, the point-wise confidence intervals are also plotted.}
 
 \item{ta.t0}{a numeric value that indicates the time, right after which there is an anticipation of treatment. It should be
-greater than the minimal event time and no greater than 0. If it equals to 0, there is no anticipation.}
+greater than the minimal event time and no greater than t0 in \code{object}. If it is NULL, there is no anticipation.}
 
 \item{frm.mbar}{a numeric value of tuning parameter for functional relative magnitudes.}
 
@@ -42,12 +42,20 @@ This function is an S3 method for \link[base]{plot}, specifically designed for o
 It plots simultaneous confidence band with bounds for honest inference.
 }
 \note{
-The inference result around event time 0 (i.e. between two event time closest to 0) should be treated with caution.
+The inference result around the reference time point (i.e. between two event time closest to the reference time) should be treated with caution.
 }
 \examples{
 data(LWdata)
 fdid_scb_est <- fdid_scb(beta=LWdata$beta, cov=LWdata$cov, t0=LWdata$t0)
+cat("The reference time is ", LWdata$t0, ". If not NULL, the input 'ta.t0' in function 'plot' should be smaller than this value.", sep="")
+
+## simultaneous inference
 plot(fdid_scb_est)
+
+## honest inference under treatment anticipation
+plot(fdid_scb_est, ta.t0=-4)
+
+## honest inference under differential trend
 plot(fdid_scb_est, frm.mbar=0.3)
 }
 \references{

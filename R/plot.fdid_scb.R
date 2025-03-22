@@ -5,7 +5,7 @@
 #' @param object an object of class \code{"fdid_scb"}. The object to be plotted.
 #' @param ci a logical value. If TRUE, the point-wise confidence intervals are also plotted.
 #' @param ta.t0 a numeric value that indicates the time, right after which there is an anticipation of treatment. It should be
-#' greater than the minimal event time and no greater than 0. If it equals to 0, there is no anticipation.
+#' greater than the minimal event time and no greater than t0 in \code{object}. If it is NULL, there is no anticipation.
 #' @param frm.mbar a numeric value of tuning parameter for functional relative magnitudes.
 #' @param ftr.m a numeric value of tuning parameter for functional trend restrictions.
 #' @param frmtr.mbar a numeric value of tuning parameter for combining functional relative magnitudes and functional trend restrictions.
@@ -14,7 +14,7 @@
 #'
 #' @return The function returns a plot with simultaneous confidence band for event study coefficients in a functional framework,
 #' together with bounds for honest inference, if properly defined.
-#' @note The inference result around event time 0 (i.e. between two event time closest to 0) should be treated with caution.
+#' @note The inference result around the reference time point (i.e. between two event time closest to the reference time) should be treated with caution.
 #'
 #' @import foreach
 #' @import doParallel
@@ -27,19 +27,29 @@
 #' @examples
 #' data(LWdata)
 #' fdid_scb_est <- fdid_scb(beta=LWdata$beta, cov=LWdata$cov, t0=LWdata$t0)
+#' cat("The reference time is ", LWdata$t0, ". If not NULL, the input 'ta.t0' in function 'plot' should be smaller than this value.", sep="")
+#'
+#' ## simultaneous inference
 #' plot(fdid_scb_est)
+#'
+#' ## honest inference under treatment anticipation
+#' plot(fdid_scb_est, ta.t0=-4)
+#'
+#' ## honest inference under differential trend
 #' plot(fdid_scb_est, frm.mbar=0.3)
-plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, frmtr.mbar=NULL, legend="top", ...) {
+plot.fdid_scb <- function(object, ci=TRUE, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL, frmtr.mbar=NULL, legend="top", ...) {
 
   # give out a warn
-  warning("The inference result around event time 0 (i.e. between two event time closest to 0) should be treated with caution.")
+  warning_note <- paste("The inference result around the reference time t=", object$data$t0, "(i.e. between two event time closest to the reference time) should be treated with caution.")
+  warning(warning_note)
 
   options(warn=-1)
 
   # check conditions
-  if(!base::inherits(object,"fdid_scb")) stop("The input 'object' should be an output of function 'fdid_scb'.")
-  if(!is.logical(ci)) stop("The input 'ci' should be logical.")
-  if(!(ta.t0 %in% object$scb$event_t[which(object$scb$event_t<=0)][-1])) stop("The input 'ta.t0' should be greater than the minimal event time and no greater than 0.")
+  if (!base::inherits(object,"fdid_scb")) stop("The input 'object' should be an output of function 'fdid_scb'.")
+  if (!is.logical(ci)) stop("The input 'ci' should be logical.")
+  if (!is.null(ta.t0) && (!is.numeric(ta.t0) || length(ta.t0) != 1)) stop("The input 'ta.t0' should be either NULL or a numeric scalar.")
+  if (!is.null(ta.t0) && !(ta.t0 %in% object$scb$event_t[which(object$scb$event_t<=object$data$t0)][-1])) stop("If not NULL, the input 'ta.t0' should be greater than the minimal event time and no greater than t0 in 'object'.")
   if (!is.null(frm.mbar) && (!is.numeric(frm.mbar) || length(frm.mbar) != 1 || frm.mbar < 0)) stop("The input 'frm.mbar' should be either NULL or a numeric non-negative scalar.")
   if (!is.null(ftr.m) && (!is.numeric(ftr.m) || length(ftr.m) != 1 || ftr.m < 0)) stop("The input 'ftr.m' should be either NULL or a numeric non-negative scalar.")
   if (!is.null(frmtr.mbar) && (!is.numeric(frmtr.mbar) || length(frmtr.mbar) != 1 || frmtr.mbar < 0)) stop("The input 'frmtr.mbar' should be either NULL or a numeric non-negative scalar.")
@@ -58,11 +68,13 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, f
   ci_upper <- object$ci[,"ci_upper"]
   ci_lower <- object$ci[,"ci_lower"]
 
-  start <- min(object$data$beta[,2])
-  end   <- max(object$data$beta[,2])
+  start                     <- min(object$data$beta[,2])
+  end                       <- max(object$data$beta[,2])
+  t0                        <- object$data$t0
+  if (is.null(ta.t0)) ta.t0 <- t0
 
   # regular statistical inference
-  if (ta.t0==0 & is.null(frm.mbar) & is.null(ftr.m) & is.null(frmtr.mbar)) {
+  if (ta.t0==t0 & is.null(frm.mbar) & is.null(ftr.m) & is.null(frmtr.mbar)) {
 
     # find the time spans of statistical significance
     num_cores <- parallel::detectCores() - 1
@@ -146,7 +158,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, f
     # honest inference
     if(is.null(frm.mbar) & is.null(ftr.m) & is.null(frmtr.mbar)) {
 
-      if(ta.t0==0) {ta.alpha <- 1} else {ta.alpha <- 0.05}
+      if(ta.t0==t0) {ta.alpha <- 1} else {ta.alpha <- 0.05}
 
       ta_ub <- betahat[which(timeVec==ta.t0)]+qt(p=1-ta.alpha/2,df=99)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
       ta_lb <- betahat[which(timeVec==ta.t0)]-qt(p=1-ta.alpha/2,df=99)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
@@ -161,7 +173,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, f
 
     if(!is.null(frm.mbar) & is.null(ftr.m) & is.null(frmtr.mbar)) {
 
-      if(ta.t0==0) {ta.alpha <- 1} else {ta.alpha <- 0.05}
+      if(ta.t0==t0) {ta.alpha <- 1} else {ta.alpha <- 0.05}
       ta_ub <- betahat[which(timeVec==ta.t0)]+qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment/post-anticipation periods
       ta_lb <- betahat[which(timeVec==ta.t0)]-qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment/post-anticipation periods
 
@@ -177,7 +189,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, f
 
       x_vals <- seq(start, end, length.out = 5*length(timeVec))
 
-      if (ta.t0!=0) {
+      if (ta.t0!=t0) {
         honest_ub_vals <- apply(cbind(ta_ub, frm_ub_ta_ub(x_vals), frm_ub_ta_lb(x_vals)), 1,  function(row) max(row,na.rm=TRUE))
         honest_lb_vals <- apply(cbind(ta_lb, frm_lb_ta_ub(x_vals), frm_lb_ta_lb(x_vals)), 1,  function(row) min(row,na.rm=TRUE))
       } else {
@@ -193,7 +205,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, f
 
     if(is.null(frm.mbar) & !is.null(ftr.m) & is.null(frmtr.mbar)) {
 
-      if(ta.t0==0) {ta.alpha <- 1} else {ta.alpha <- 0.05}
+      if(ta.t0==t0) {ta.alpha <- 1} else {ta.alpha <- 0.05}
       ta_ub <- betahat[which(timeVec==ta.t0)]+qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
       ta_lb <- betahat[which(timeVec==ta.t0)]-qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
 
@@ -209,7 +221,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, f
 
       x_vals <- seq(start, end, length.out=5*length(timeVec))
 
-      if (ta.t0!=0) {
+      if (ta.t0!=t0) {
         honest_ub_vals <- apply(cbind(ta_ub, ftr_ub_ta_ub(x_vals), ftr_ub_ta_lb(x_vals)), 1,  function(row) max(row,na.rm=TRUE))
         honest_lb_vals <- apply(cbind(ta_lb, ftr_lb_ta_ub(x_vals), ftr_lb_ta_lb(x_vals)), 1,  function(row) min(row,na.rm=TRUE))
       } else {
@@ -224,7 +236,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, f
 
     if(is.null(frm.mbar) & is.null(ftr.m) & !is.null(frmtr.mbar)) {
 
-      if(ta.t0==0) {ta.alpha <- 1} else {ta.alpha <- 0.05}
+      if(ta.t0==t0) {ta.alpha <- 1} else {ta.alpha <- 0.05}
       ta_ub <- betahat[which(timeVec==ta.t0)]+qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
       ta_lb <- betahat[which(timeVec==ta.t0)]-qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
 
@@ -241,7 +253,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, f
 
       x_vals <- seq(start, end, length.out=5*length(timeVec))
 
-      if (ta.t0!=0) {
+      if (ta.t0!=t0) {
         honest_ub_vals <- apply(cbind(ta_ub, ftr_ub_ta_ub(x_vals), ftr_ub_ta_lb(x_vals)), 1,  function(row) max(row,na.rm=TRUE))
         honest_lb_vals <- apply(cbind(ta_lb, ftr_lb_ta_ub(x_vals), ftr_lb_ta_lb(x_vals)), 1,  function(row) min(row,na.rm=TRUE))
       } else {
@@ -351,9 +363,9 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=0, frm.mbar=NULL, ftr.m=NULL, f
       xlim <- par("usr")[1:2]
       ylim <- par("usr")[3:4]
 
-      if (ta.t0!=0 & (!is.null(frm.mbar) | !is.null(ftr.m) | !is.null(frmtr.mbar))) {upper_text <- "Reference values with anticipation and PT violations"; lower_text <- "Reference value without anticipation or PT violations          "}
-      if (ta.t0==0 & (!is.null(frm.mbar) | !is.null(ftr.m) | !is.null(frmtr.mbar))) {upper_text <- "Reference values with PT violations"; lower_text <- "Reference value without PT violations          "}
-      if (ta.t0!=0 & is.null(frm.mbar) & is.null(ftr.m) & is.null(frmtr.mbar)) {upper_text <- "Reference values with anticipation"; lower_text <- "Reference value without anticipation          "}
+      if (ta.t0!=t0 & (!is.null(frm.mbar) | !is.null(ftr.m) | !is.null(frmtr.mbar))) {upper_text <- "Reference values with anticipation and PT violations"; lower_text <- "Reference value without anticipation or PT violations          "}
+      if (ta.t0==t0 & (!is.null(frm.mbar) | !is.null(ftr.m) | !is.null(frmtr.mbar))) {upper_text <- "Reference values with PT violations"; lower_text <- "Reference value without PT violations          "}
+      if (ta.t0!=t0 & is.null(frm.mbar) & is.null(ftr.m) & is.null(frmtr.mbar)) {upper_text <- "Reference values with anticipation"; lower_text <- "Reference value without anticipation          "}
 
       text_width_upper   <- strwidth(upper_text) # calculate the width of the text dynamically
       text_width_lower   <- strwidth(lower_text)

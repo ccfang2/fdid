@@ -10,12 +10,11 @@ fdid(data, treatment)
 \item{data}{a data frame in which the first variable should be the outcome variable, and the last two variables are time and unit indices. Covariates are placed
 after the outcome but before time and unit variables. Outcome and covariates should be numeric.}
 
-\item{treatment}{a data frame that indicates the reference time for each unit, i.e. the time right after which a treatment effect is present. NA implies that the
-unit is never treated/control.}
+\item{treatment}{a data frame that indicates the time, right after the treatment is given, for each unit. NA implies that the unit is never treated/control.}
 }
 \value{
 The \code{fdid} function returns a list which includes the estimates of event study coefficients and their covariance. It also contains the estimates of
-time-invariant coefficients for covariates and their standard errors at each period. In the output, the event time 0 is taken as the reference time. The output is
+time-invariant coefficients for covariates and their standard errors at each period. In the output, the event time 0 is considered as the reference time. The output is
 an object of S3 class \code{"fdid"}.
 }
 \description{

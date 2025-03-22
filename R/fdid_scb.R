@@ -65,7 +65,7 @@ fdid_scb <- function(object=NULL,
     if (beta[,1][which(beta[,2]==t0)]!=0) stop("beta at t0 should be normalized to 0.")
     if (any(cov[which(beta[,2]==t0),]!=0) && any(covhat[,which(timeVec==t0)]!=0)) stop("Rows and columns of cov at t0 should all be normalized to 0.")
 
-    beta[,2]       <- beta[,2]-t0
+    #beta[,2]       <- beta[,2]-t0
     t_order        <- order(beta[,2])
     beta           <- beta[t_order,]
     colnames(beta) <- c(colnames(beta)[1], "event_t")
@@ -76,6 +76,8 @@ fdid_scb <- function(object=NULL,
     betahat        <- beta[,1]
     covhat         <- cov
     timeVec        <- beta[,2]
+    t0             <- t0
+
   } else {
 
     beta           <- object$beta$coef
@@ -84,6 +86,7 @@ fdid_scb <- function(object=NULL,
     betahat        <- beta[,1]
     covhat         <- cov
     timeVec        <- beta[,2]
+    t0             <- object$t0
   }
 
   # estimate point-wise confidence interval
@@ -100,7 +103,8 @@ fdid_scb <- function(object=NULL,
   len_spline <- 5*len_t
 
   timeVec_spline <- seq(min(timeVec), max(timeVec), length.out=len_spline)
-  while (0 %in% timeVec_spline) {len_spline <- len_spline+1; timeVec_spline <- seq(min(timeVec), max(timeVec), length.out=len_spline) }
+  while (t0 %in% timeVec_spline) {len_spline <- len_spline+1; timeVec_spline <- seq(min(timeVec), max(timeVec), length.out=len_spline) }
+  #while (0 %in% timeVec_spline) {len_spline <- len_spline+1; timeVec_spline <- seq(min(timeVec), max(timeVec), length.out=len_spline) }
 
   betahat_spline    <- spline(x=timeVec, y=betahat, n=len_spline, method="natural")$y
   betahat_splinefun <- splinefun(x=timeVec, y=betahat, method="natural")
@@ -135,9 +139,11 @@ fdid_scb <- function(object=NULL,
     }
   }
 
-  idx_pos          <- which(timeVec_spline>=0)[1]
+  idx_pos          <- which(timeVec_spline>=t0)[1]
+  #idx_pos          <- which(timeVec_spline>=0)[1]
   scb              <- rbind(scb[1:(idx_pos-1),],0,scb[idx_pos:len_spline,])
-  x                <- c(timeVec_spline[1:(idx_pos-1)],0,timeVec_spline[idx_pos:len_spline])
+  x                <- c(timeVec_spline[1:(idx_pos-1)],t0,timeVec_spline[idx_pos:len_spline])
+  #x                <- c(timeVec_spline[1:(idx_pos-1)],0,timeVec_spline[idx_pos:len_spline])
   scb_ub_splinefun <- splinefun(x=x, y=scb[,(ncol(scb)-1)], method="natural")
   scb_lb_splinefun <- splinefun(x=x, y=scb[,ncol(scb)], method="natural")
 
@@ -147,7 +153,7 @@ fdid_scb <- function(object=NULL,
                                 scb_lb= scb_lb_splinefun,
                                 event_t=timeVec),
                        ci=cbind(betahat, ci_upper, ci_lower, event_t=timeVec),
-                       data=list(beta=beta, cov=cov))
+                       data=list(beta=beta, cov=cov, t0=t0))
 
   class(final_output) <- "fdid_scb"
   return(final_output)

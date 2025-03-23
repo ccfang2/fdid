@@ -11,7 +11,7 @@
   frm.mbar = NULL,
   ftr.m = NULL,
   frmtr.mbar = NULL,
-  legend = "top",
+  pos.legend = "top",
   ...
 )
 }
@@ -29,7 +29,7 @@ greater than the minimal event time and no greater than t0 in \code{object}. If 
 
 \item{frmtr.mbar}{a numeric value of tuning parameter for combining functional relative magnitudes and functional trend restrictions.}
 
-\item{legend}{a character value of "top" or "bottom" that indicates the position of legend. If NULL, the legend is not printed.}
+\item{pos.legend}{a character value of "top" or "bottom" that indicates the position of legend. If NULL, the legend is not printed.}
 
 \item{...}{Additional arguments to be passed to \link[base]{plot}.}
 }

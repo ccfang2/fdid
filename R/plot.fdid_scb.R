@@ -9,7 +9,7 @@
 #' @param frm.mbar a numeric value of tuning parameter for functional relative magnitudes.
 #' @param ftr.m a numeric value of tuning parameter for functional trend restrictions.
 #' @param frmtr.mbar a numeric value of tuning parameter for combining functional relative magnitudes and functional trend restrictions.
-#' @param legend a character value of "top" or "bottom" that indicates the position of legend. If NULL, the legend is not printed.
+#' @param pos.legend a character value of "top" or "bottom" that indicates the position of legend. If NULL, the legend is not printed.
 #' @param ... Additional arguments to be passed to \link[base]{plot}.
 #'
 #' @return The function returns a plot with simultaneous confidence band for event study coefficients in a functional framework,
@@ -37,7 +37,7 @@
 #'
 #' ## honest inference under differential trend
 #' plot(fdid_scb_est, frm.mbar=0.3)
-plot.fdid_scb <- function(object, ci=TRUE, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL, frmtr.mbar=NULL, legend="top", ...) {
+plot.fdid_scb <- function(object, ci=TRUE, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL, frmtr.mbar=NULL, pos.legend="top", ...) {
 
   # give out a warn
   warning_note <- paste("The inference result around the reference time t=", object$data$t0, "(i.e. between two event time closest to the reference time) should be treated with caution.")
@@ -54,7 +54,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL
   if (!is.null(ftr.m) && (!is.numeric(ftr.m) || length(ftr.m) != 1 || ftr.m < 0)) stop("The input 'ftr.m' should be either NULL or a numeric non-negative scalar.")
   if (!is.null(frmtr.mbar) && (!is.numeric(frmtr.mbar) || length(frmtr.mbar) != 1 || frmtr.mbar < 0)) stop("The input 'frmtr.mbar' should be either NULL or a numeric non-negative scalar.")
   if (!is.null(frm.mbar) && !is.null(ftr.m) && !is.null(frmtr.mbar)) stop("Exactly one of inputs 'frm.mbar', 'ftr.m' and 'frmtr.mbar' can have a value, or all three are NULL.")
-  if (!is.null(legend) && !legend %in% c("top", "bottom")) stop("The input 'legend' must be 'top', 'bottom', or NULL.")
+  if (!is.null(pos.legend) && !pos.legend %in% c("top", "bottom")) stop("The input 'pos.legend' must be 'top', 'bottom', or NULL.")
 
   # extract data from object
   betahat <- object$data$beta[,1]
@@ -124,7 +124,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL
     }
 
     # write a legend for the plot
-    if(!is.null(legend)) {
+    if(!is.null(pos.legend)) {
 
       xlim <- par("usr")[1:2]
       ylim <- par("usr")[3:4]
@@ -138,8 +138,8 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL
       rect_x1           <- mean(xlim)-rect_width/2
       rect_x2           <- mean(xlim)+rect_width/2
 
-      if(legend=="top")    {rect_y2 <- ylim[2]-rect_height*0.5; rect_y1 <- rect_y2-rect_height}
-      if(legend=="bottom") {rect_y2 <- ylim[1]+rect_height*0.5; rect_y1 <- rect_y2+rect_height}
+      if(pos.legend=="top")    {rect_y2 <- ylim[2]-rect_height*0.5; rect_y1 <- rect_y2-rect_height}
+      if(pos.legend=="bottom") {rect_y2 <- ylim[1]+rect_height*0.5; rect_y1 <- rect_y2+rect_height}
 
       rect(rect_x1, rect_y1, rect_x2, rect_y2, col = "white", border = "black")
 
@@ -147,8 +147,8 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL
       line_x1      <- rect_x1+left_padding
       line_x2      <- rect_x1+left_padding+fixed_line_width
 
-      if(legend=="top")    {line_y <- rect_y1+rect_height*0.4}
-      if(legend=="bottom") {line_y <- rect_y1-rect_height*0.4}
+      if(pos.legend=="top")    {line_y <- rect_y1+rect_height*0.4}
+      if(pos.legend=="bottom") {line_y <- rect_y1-rect_height*0.4}
 
       segments(line_x1, line_y, line_x2, line_y, col = "red", lwd = 4, lty = 3)
       text(line_x2 + left_padding, line_y, text, cex = 1, adj = 0)
@@ -358,7 +358,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL
     }
 
     # write a legend for the plot
-    if(!is.null(legend)) {
+    if(!is.null(pos.legend)) {
 
       xlim <- par("usr")[1:2]
       ylim <- par("usr")[3:4]
@@ -377,8 +377,8 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL
       rect_x1            <- mean(xlim)-rect_width/2 # define positions for the white rectangle A (centered)
       rect_x2            <- mean(xlim)+rect_width/2
 
-      if(legend=="top")    {rect_y2 <- ylim[2]-rect_height*0.5; rect_y1 <- rect_y2-rect_height}
-      if(legend=="bottom") {rect_y2 <- ylim[1]+rect_height*0.5; rect_y1 <- rect_y2+rect_height}
+      if(pos.legend=="top")    {rect_y2 <- ylim[2]-rect_height*0.5; rect_y1 <- rect_y2-rect_height}
+      if(pos.legend=="bottom") {rect_y2 <- ylim[1]+rect_height*0.5; rect_y1 <- rect_y2+rect_height}
 
       rect(rect_x1, rect_y1, rect_x2, rect_y2, col = "white", border = "black") # draw white rectangular A with black border
 
@@ -386,8 +386,8 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL
       rect_b_x1    <- rect_x1+left_padding  # position and draw the fixed-width red rectangle B (aligned with upper text)
       rect_b_x2    <- rect_b_x1+fixed_rect_b_width
 
-      if(legend=="top")    {rect_b_y2 <- rect_y2-rect_height*0.15; rect_b_y1 <- rect_b_y2-rect_height*0.35}
-      if(legend=="bottom") {rect_b_y2 <- rect_y1-rect_height*0.5; rect_b_y1 <- rect_b_y2+rect_height*0.35}
+      if(pos.legend=="top")    {rect_b_y2 <- rect_y2-rect_height*0.15; rect_b_y1 <- rect_b_y2-rect_height*0.35}
+      if(pos.legend=="bottom") {rect_b_y2 <- rect_y1-rect_height*0.5; rect_b_y1 <- rect_b_y2+rect_height*0.35}
 
       rect(rect_b_x1, rect_b_y1, rect_b_x2, rect_b_y2, col = rgb(1, 0, 0, alpha = 0.3), border = NA)  # draw red rectangle B (transparent, no border)
       text(rect_b_x2 + left_padding, (rect_b_y1 + rect_b_y2) / 2, upper_text, cex = 1,  adj = 0)  # add upper text next to red rectangle B
@@ -395,8 +395,8 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL
       line_x1 <- rect_b_x1  # define position for the red dashed line (aligned with lower text) # same as red rectangle start
       line_x2 <- rect_b_x2  # same fixed width as red rectangle
 
-      if(legend=="top")    {line_y <- rect_y1+rect_height*0.3}
-      if(legend=="bottom") {line_y <- rect_y2+rect_height*0.3}
+      if(pos.legend=="top")    {line_y <- rect_y1+rect_height*0.3}
+      if(pos.legend=="bottom") {line_y <- rect_y2+rect_height*0.3}
 
       segments(line_x1, line_y, line_x2, line_y, col = "red", lwd = 4, lty = 3)  # draw the red dashed line (fixed width)
       text(line_x2 + left_padding, line_y, lower_text, cex = 1, adj = 0)  # add lower text next to the red dashed line

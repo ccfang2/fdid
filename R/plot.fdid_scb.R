@@ -79,7 +79,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL
     # find the time spans of statistical significance
     num_cores <- parallel::detectCores() - 1
     cl        <- parallel::makeCluster(num_cores)
-    n.int     <- 500
+    n.int     <- 200
 
     doParallel::registerDoParallel(cl)
     roots <- foreach::foreach(i = 1:n.int, .combine = 'c') %dopar% {
@@ -271,7 +271,7 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL
     cl        <- parallel::makeCluster(num_cores)
     doParallel::registerDoParallel(cl)
 
-    n.int <-500
+    n.int <-200
 
     roots_UB <- foreach::foreach(i = 1:n.int, .combine = 'c') %dopar% {
       fun <- function(x) (scb_ub_splinefun(x)-honest_ub_splinefun(x))*(scb_lb_splinefun(x)-honest_ub_splinefun(x))

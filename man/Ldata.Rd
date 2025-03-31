@@ -3,7 +3,7 @@
 \docType{data}
 \name{Ldata}
 \alias{Ldata}
-\title{Event study estimates from Lafortune et al. (2017)}
+\title{Event study estimates from Lafortune et al. (2018)}
 \format{
 A list, containing 4 objects:
 \describe{
@@ -14,7 +14,7 @@ A list, containing 4 objects:
 }
 }
 \description{
-Event study estimates from Lafortune et al. (2017)
+Event study estimates from Lafortune et al. (2018)
 }
 \references{
 Lafortune, J., Rothstein, J. and Schanzenbach, D.W. (2018). School Finance Reform and the Distribution of Student Achievement. American Economic Journal: Applied Economics 10(2), 1–26.

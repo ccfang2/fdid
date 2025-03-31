@@ -6,19 +6,17 @@
 \usage{
 \method{plot}{fdid_scb}(
   object,
-  ci = TRUE,
   ta.t0 = NULL,
   frm.mbar = NULL,
   ftr.m = NULL,
   frmtr.mbar = NULL,
+  ci = TRUE,
   pos.legend = "top",
   ...
 )
 }
 \arguments{
 \item{object}{an object of class \code{"fdid_scb"}. The object to be plotted.}
-
-\item{ci}{a logical value. If TRUE, the point-wise confidence intervals are also plotted.}
 
 \item{ta.t0}{a numeric value that indicates the time, right after which there is an anticipation of treatment. It should be
 greater than the minimal event time and no greater than t0 in \code{object}. If it is NULL, there is no anticipation.}
@@ -28,6 +26,8 @@ greater than the minimal event time and no greater than t0 in \code{object}. If 
 \item{ftr.m}{a numeric value of tuning parameter for functional trend restrictions.}
 
 \item{frmtr.mbar}{a numeric value of tuning parameter for combining functional relative magnitudes and functional trend restrictions.}
+
+\item{ci}{a logical value. If TRUE, the point-wise confidence intervals are also plotted.}
 
 \item{pos.legend}{a character value of "top" or "bottom" that indicates the position of legend. If NULL, the legend is not printed.}
 

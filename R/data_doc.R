@@ -65,7 +65,7 @@ NULL
 
 #' Event study estimates from Bosch and Campos-Vazquez (2014)
 #' @docType data
-#' @name BCdata
+#' @name BCVdata
 #'
 #' @format A list, containing 4 objects:
 #' \describe{
@@ -85,7 +85,7 @@ NULL
 
 
 
-#' Event study estimates from Lafortune et al. (2017)
+#' Event study estimates from Lafortune et al. (2018)
 #' @docType data
 #' @name Ldata
 #'

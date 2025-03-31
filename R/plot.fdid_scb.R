@@ -3,12 +3,12 @@
 #' It plots simultaneous confidence band with bounds for honest inference.
 #'
 #' @param object an object of class \code{"fdid_scb"}. The object to be plotted.
-#' @param ci a logical value. If TRUE, the point-wise confidence intervals are also plotted.
 #' @param ta.t0 a numeric value that indicates the time, right after which there is an anticipation of treatment. It should be
 #' greater than the minimal event time and no greater than t0 in \code{object}. If it is NULL, there is no anticipation.
 #' @param frm.mbar a numeric value of tuning parameter for functional relative magnitudes.
 #' @param ftr.m a numeric value of tuning parameter for functional trend restrictions.
 #' @param frmtr.mbar a numeric value of tuning parameter for combining functional relative magnitudes and functional trend restrictions.
+#' @param ci a logical value. If TRUE, the point-wise confidence intervals are also plotted.
 #' @param pos.legend a character value of "top" or "bottom" that indicates the position of legend. If NULL, the legend is not printed.
 #' @param ... Additional arguments to be passed to \link[base]{plot}.
 #'
@@ -16,8 +16,6 @@
 #' together with bounds for honest inference, if properly defined.
 #' @note The inference result around the reference time point (i.e. between two event time closest to the reference time) should be treated with caution.
 #'
-#' @import foreach
-#' @import doParallel
 #' @import pracma
 #' @export
 #'
@@ -37,7 +35,7 @@
 #'
 #' ## honest inference under differential trend
 #' plot(fdid_scb_est, frm.mbar=0.3)
-plot.fdid_scb <- function(object, ci=TRUE, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL, frmtr.mbar=NULL, pos.legend="top", ...) {
+plot.fdid_scb <- function(object, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL, frmtr.mbar=NULL, ci=TRUE, pos.legend="top", ...) {
 
   # give out a warn
   warning_note <- paste("The inference result around the reference time t=", object$data$t0, "(i.e. between two event time closest to the reference time) should be treated with caution.")
@@ -49,7 +47,8 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL
   if (!base::inherits(object,"fdid_scb")) stop("The input 'object' should be an output of function 'fdid_scb'.")
   if (!is.logical(ci)) stop("The input 'ci' should be logical.")
   if (!is.null(ta.t0) && (!is.numeric(ta.t0) || length(ta.t0) != 1)) stop("The input 'ta.t0' should be either NULL or a numeric scalar.")
-  if (!is.null(ta.t0) && !(ta.t0 %in% object$scb$event_t[which(object$scb$event_t<=object$data$t0)][-1])) stop("If not NULL, the input 'ta.t0' should be greater than the minimal event time and no greater than t0 in 'object'.")
+  if (!is.null(ta.t0) && !(ta.t0 %in% object$scb$event_t[which(object$scb$event_t<=object$data$t0)])) stop("If not NULL, the input 'ta.t0' should be no greater than t0 in 'object'.")
+  if (!is.null(ta.t0) && ta.t0 == object$scb$event_t[1] && !all(sapply(list(frm.mbar, ftr.m, frmtr.mbar), is.null))) stop("If 'ta.t0' is defined to be the first event time, 'frm.mbar', 'ftr.m' and 'frmtr.mbar' must be NULL, because there is no available data for computing pre-trend differences.")
   if (!is.null(frm.mbar) && (!is.numeric(frm.mbar) || length(frm.mbar) != 1 || frm.mbar < 0)) stop("The input 'frm.mbar' should be either NULL or a numeric non-negative scalar.")
   if (!is.null(ftr.m) && (!is.numeric(ftr.m) || length(ftr.m) != 1 || ftr.m < 0)) stop("The input 'ftr.m' should be either NULL or a numeric non-negative scalar.")
   if (!is.null(frmtr.mbar) && (!is.numeric(frmtr.mbar) || length(frmtr.mbar) != 1 || frmtr.mbar < 0)) stop("The input 'frmtr.mbar' should be either NULL or a numeric non-negative scalar.")
@@ -77,18 +76,15 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL
   if (ta.t0==t0 & is.null(frm.mbar) & is.null(ftr.m) & is.null(frmtr.mbar)) {
 
     # find the time spans of statistical significance
-    num_cores <- parallel::detectCores() - 1
-    cl        <- parallel::makeCluster(num_cores)
-    n.int     <- 200
-
-    doParallel::registerDoParallel(cl)
-    roots <- foreach::foreach(i = 1:n.int, .combine = 'c') %dopar% {
+    n.int <- 200
+    roots <- vector("numeric", length = n.int)
+    for (i in 1:n.int) {
       fun      <- function(x) scb_ub_splinefun(x)*scb_lb_splinefun(x)
       interval <- c(start+(i-1)*(end-start)/n.int, start+(i)*(end-start)/n.int)
       root     <- try(uniroot(fun, interval = interval)$root, silent = TRUE)
-      if(inherits(root, "try-error")) {NULL} else root
+      roots[i] <- if(inherits(root, "try-error")) {NA} else root
     }
-    parallel::stopCluster(cl)
+    roots <- roots[!is.na(roots)]
 
     roots_vec    <- c(start,roots,end)
     stat_sig_vec <- rep(NA, length(roots_vec)-1)
@@ -267,27 +263,25 @@ plot.fdid_scb <- function(object, ci=TRUE, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL
     }
 
     # find the time spans of statistical significance
-    num_cores <- parallel::detectCores() - 1
-    cl        <- parallel::makeCluster(num_cores)
-    doParallel::registerDoParallel(cl)
-
     n.int <-200
 
-    roots_UB <- foreach::foreach(i = 1:n.int, .combine = 'c') %dopar% {
-      fun <- function(x) (scb_ub_splinefun(x)-honest_ub_splinefun(x))*(scb_lb_splinefun(x)-honest_ub_splinefun(x))
-      interval <- c(start+(i-1)*(end-start)/n.int, start+(i)*(end-start)/n.int) #change here if focusing only on post-treatment/post-anticipation periods
-      root <- try(uniroot(fun, interval = interval)$root, silent = TRUE)
-      if(inherits(root, "try-error")) {NULL} else root
+    roots_UB <- vector("numeric", length = n.int)
+    for (i in 1:n.int) {
+      fun         <- function(x) (scb_ub_splinefun(x)-honest_ub_splinefun(x))*(scb_lb_splinefun(x)-honest_ub_splinefun(x))
+      interval    <- c(start+(i-1)*(end-start)/n.int, start+(i)*(end-start)/n.int) #change here if focusing only on post-treatment/post-anticipation periods
+      root        <- try(uniroot(fun, interval = interval)$root, silent = TRUE)
+      roots_UB[i] <- if(inherits(root, "try-error")) {NA} else root
     }
+    roots_UB <- roots_UB[!is.na(roots_UB)]
 
-    roots_LB <- foreach::foreach(i = 1:n.int, .combine = 'c') %dopar% {
-      fun <- function(x) (scb_ub_splinefun(x)-honest_lb_splinefun(x))*(scb_lb_splinefun(x)-honest_lb_splinefun(x))
-      interval <- c(start+(i-1)*(end-start)/n.int, start+(i)*(end-start)/n.int)
-      root <- try(uniroot(fun, interval = interval)$root, silent = TRUE)
-      if(inherits(root, "try-error")) {NULL} else root
+    roots_LB <- vector("numeric", length = n.int)
+    for (i in 1:n.int) {
+      fun         <- function(x) (scb_ub_splinefun(x)-honest_lb_splinefun(x))*(scb_lb_splinefun(x)-honest_lb_splinefun(x))
+      interval    <- c(start+(i-1)*(end-start)/n.int, start+(i)*(end-start)/n.int)
+      root        <- try(uniroot(fun, interval = interval)$root, silent = TRUE)
+      roots_LB[i] <- if(inherits(root, "try-error")) {NA} else root
     }
-
-    parallel::stopCluster(cl)
+    roots_LB <- roots_LB[!is.na(roots_LB)]
 
     roots_UB_vec <- c(start,roots_UB,end)
     roots_LB_vec <- c(start,roots_LB,end)

@@ -15,8 +15,6 @@ Remotes: lidom/ffscb
 Imports:
 	stats,
 	dplyr,
-	foreach,
-	doParallel,
 	pracma,
 	ffscb
 Encoding: UTF-8

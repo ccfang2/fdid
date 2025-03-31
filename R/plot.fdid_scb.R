@@ -47,7 +47,7 @@ plot.fdid_scb <- function(object, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL, frmtr.m
   if (!base::inherits(object,"fdid_scb")) stop("The input 'object' should be an output of function 'fdid_scb'.")
   if (!is.logical(ci)) stop("The input 'ci' should be logical.")
   if (!is.null(ta.t0) && (!is.numeric(ta.t0) || length(ta.t0) != 1)) stop("The input 'ta.t0' should be either NULL or a numeric scalar.")
-  if (!is.null(ta.t0) && !(ta.t0 %in% object$scb$event_t[which(object$scb$event_t<=object$data$t0)])) stop("If not NULL, the input 'ta.t0' should be no greater than t0 in 'object'.")
+  if (!is.null(ta.t0) && !(ta.t0 %in% object$scb$event_t[which(object$scb$event_t<=object$data$t0)])) stop("If not NULL, the input 'ta.t0' should be among the pre-treatment event time in 'object'.")
   if (!is.null(ta.t0) && ta.t0 == object$scb$event_t[1] && !all(sapply(list(frm.mbar, ftr.m, frmtr.mbar), is.null))) stop("If 'ta.t0' is defined to be the first event time, 'frm.mbar', 'ftr.m' and 'frmtr.mbar' must be NULL, because there is no available data for computing pre-trend differences.")
   if (!is.null(frm.mbar) && (!is.numeric(frm.mbar) || length(frm.mbar) != 1 || frm.mbar < 0)) stop("The input 'frm.mbar' should be either NULL or a numeric non-negative scalar.")
   if (!is.null(ftr.m) && (!is.numeric(ftr.m) || length(ftr.m) != 1 || ftr.m < 0)) stop("The input 'ftr.m' should be either NULL or a numeric non-negative scalar.")

@@ -70,6 +70,8 @@ plot.fdid_scb <- function(object, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL, frmtr.m
   start                     <- min(object$data$beta[,2])
   end                       <- max(object$data$beta[,2])
   t0                        <- object$data$t0
+  df                        <- object$data$df
+  conf.level                <- object$data$conf.level
   if (is.null(ta.t0)) ta.t0 <- t0
 
   # regular statistical inference
@@ -154,10 +156,15 @@ plot.fdid_scb <- function(object, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL, frmtr.m
     # honest inference
     if(is.null(frm.mbar) & is.null(ftr.m) & is.null(frmtr.mbar)) {
 
-      if(ta.t0==t0) {ta.alpha <- 1} else {ta.alpha <- 0.05}
+      if(ta.t0==t0) {ta.alpha <- 1} else {ta.alpha <- 1-conf.level}
 
-      ta_ub <- betahat[which(timeVec==ta.t0)]+qt(p=1-ta.alpha/2,df=99)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
-      ta_lb <- betahat[which(timeVec==ta.t0)]-qt(p=1-ta.alpha/2,df=99)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
+      if(is.null(df)) {
+        ta_ub <- betahat[which(timeVec==ta.t0)]+qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
+        ta_lb <- betahat[which(timeVec==ta.t0)]-qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)])
+      } else {
+        ta_ub <- betahat[which(timeVec==ta.t0)]+qt(p=1-ta.alpha/2,df=df)*sqrt(diag(covhat)[which(timeVec==ta.t0)])
+        ta_lb <- betahat[which(timeVec==ta.t0)]-qt(p=1-ta.alpha/2,df=df)*sqrt(diag(covhat)[which(timeVec==ta.t0)])
+      }
 
       honest_ub_splinefun <- function(x) ta_ub
       honest_lb_splinefun <- function(x) ta_lb
@@ -169,9 +176,15 @@ plot.fdid_scb <- function(object, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL, frmtr.m
 
     if(!is.null(frm.mbar) & is.null(ftr.m) & is.null(frmtr.mbar)) {
 
-      if(ta.t0==t0) {ta.alpha <- 1} else {ta.alpha <- 0.05}
-      ta_ub <- betahat[which(timeVec==ta.t0)]+qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment/post-anticipation periods
-      ta_lb <- betahat[which(timeVec==ta.t0)]-qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment/post-anticipation periods
+      if(ta.t0==t0) {ta.alpha <- 1} else {ta.alpha <- 1-conf.level}
+
+      if(is.null(df)) {
+        ta_ub <- betahat[which(timeVec==ta.t0)]+qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment/post-anticipation periods
+        ta_lb <- betahat[which(timeVec==ta.t0)]-qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)])
+      } else {
+        ta_ub <- betahat[which(timeVec==ta.t0)]+qt(p=1-ta.alpha/2, df=df)*sqrt(diag(covhat)[which(timeVec==ta.t0)])
+        ta_lb <- betahat[which(timeVec==ta.t0)]-qt(p=1-ta.alpha/2, df=df)*sqrt(diag(covhat)[which(timeVec==ta.t0)])
+      }
 
       # frm bounds
       ts             <- seq(start, ta.t0, length.out=50*sum(timeVec<=ta.t0))
@@ -201,9 +214,15 @@ plot.fdid_scb <- function(object, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL, frmtr.m
 
     if(is.null(frm.mbar) & !is.null(ftr.m) & is.null(frmtr.mbar)) {
 
-      if(ta.t0==t0) {ta.alpha <- 1} else {ta.alpha <- 0.05}
-      ta_ub <- betahat[which(timeVec==ta.t0)]+qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
-      ta_lb <- betahat[which(timeVec==ta.t0)]-qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
+      if(ta.t0==t0) {ta.alpha <- 1} else {ta.alpha <- 1-conf.level}
+
+      if(is.null(df)) {
+        ta_ub <- betahat[which(timeVec==ta.t0)]+qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
+        ta_lb <- betahat[which(timeVec==ta.t0)]-qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)])
+      } else {
+        ta_ub <- betahat[which(timeVec==ta.t0)]+qt(p=1-ta.alpha/2, df=df)*sqrt(diag(covhat)[which(timeVec==ta.t0)])
+        ta_lb <- betahat[which(timeVec==ta.t0)]-qt(p=1-ta.alpha/2, df=df)*sqrt(diag(covhat)[which(timeVec==ta.t0)])
+      }
 
       # ftr bounds
       ts          <- seq(start, ta.t0, length.out=50*sum(timeVec<=ta.t0))
@@ -232,9 +251,15 @@ plot.fdid_scb <- function(object, ta.t0=NULL, frm.mbar=NULL, ftr.m=NULL, frmtr.m
 
     if(is.null(frm.mbar) & is.null(ftr.m) & !is.null(frmtr.mbar)) {
 
-      if(ta.t0==t0) {ta.alpha <- 1} else {ta.alpha <- 0.05}
-      ta_ub <- betahat[which(timeVec==ta.t0)]+qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
-      ta_lb <- betahat[which(timeVec==ta.t0)]-qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
+      if(ta.t0==t0) {ta.alpha <- 1} else {ta.alpha <- 1-conf.level}
+
+      if(is.null(df)) {
+        ta_ub <- betahat[which(timeVec==ta.t0)]+qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)]) #change here if focusing only on post-treatment periods
+        ta_lb <- betahat[which(timeVec==ta.t0)]-qnorm(p=1-ta.alpha/2)*sqrt(diag(covhat)[which(timeVec==ta.t0)])
+      } else {
+        ta_ub <- betahat[which(timeVec==ta.t0)]+qt(p=1-ta.alpha/2, df=df)*sqrt(diag(covhat)[which(timeVec==ta.t0)])
+        ta_lb <- betahat[which(timeVec==ta.t0)]-qt(p=1-ta.alpha/2, df=df)*sqrt(diag(covhat)[which(timeVec==ta.t0)])
+      }
 
       # frmtr bounds
       ts             <- seq(start, ta.t0, length.out=50*sum(timeVec<=ta.t0))

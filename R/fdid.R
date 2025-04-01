@@ -27,6 +27,10 @@ fdid <- function(data,
 
   options(warn=-1)
 
+  # rename columns of data frames
+  colnames(data)[c(1, ncol(data)-1, ncol(data))] <- c("y", "t", "i")
+  colnames(treatment) <- c("i","t0")
+
   #check conditions
   if(!is.numeric(data$t)) stop("The time index should be numeric.")
   if(!is.numeric(data$y)) stop("The outcome variable should be numeric.")
@@ -35,8 +39,6 @@ fdid <- function(data,
   if(!(NA %in% unique(treatment$t0))) stop("There must be control units with t0=NA as defined in the data frame 'treatment'.")
 
   # join the two data frames
-  colnames(data)[c(1, ncol(data)-1, ncol(data))] <- c("y", "t", "i")
-  colnames(treatment) <- c("i","t0")
   data                <- data[order(data$i, data$t), ]
   treatment           <- treatment[order(treatment$i), ]
   data                <- dplyr::left_join(data, treatment, by="i") # we need to left join them so that we can have a data list with the name of t0
@@ -122,7 +124,7 @@ fdid <- function(data,
     # extract the output directly in non-staggered design with only one t0
     fdid_nonstagger_list[[1]]$beta$coef[,"t"]     <- round(fdid_nonstagger_list[[1]]$beta$coef[,"t"]-t0_unique[1], 6)
     colnames(fdid_nonstagger_list[[1]]$beta$coef) <- c("beta", "event_t")
-    final_output                                  <- append(fdid_nonstagger_list[[1]], list(t0=0))
+    final_output                                  <- append(fdid_nonstagger_list[[1]], list(t0=0, df=NULL))
 
   } else {
 
@@ -176,10 +178,12 @@ fdid <- function(data,
     final_output <- if(length(fdid_nonstagger_list[[1]])!=1) {
       list(beta=list(coef= beta_stagger, cov=cov_beta_stagger),
            xi=xi_list,
-           t0=0)
+           t0=0,
+           df=NULL)
       } else {
       list(beta=list(coef= beta_stagger, cov=cov_beta_stagger),
-           t0=0)
+           t0=0,
+           df=NULL)
       }
     }
 

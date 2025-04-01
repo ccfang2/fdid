@@ -77,6 +77,7 @@ fdid_scb <- function(object=NULL,
     covhat         <- cov
     timeVec        <- beta[,2]
     t0             <- t0
+    df             <- df
 
   } else {
 
@@ -87,6 +88,7 @@ fdid_scb <- function(object=NULL,
     covhat         <- cov
     timeVec        <- beta[,2]
     t0             <- object$t0
+    df             <- object$df
   }
 
   # estimate point-wise confidence interval
@@ -94,7 +96,7 @@ fdid_scb <- function(object=NULL,
     ci_upper <- betahat+qnorm(p=1-(1-conf.level)/2)*sqrt(diag(covhat))
     ci_lower <- betahat-qnorm(p=1-(1-conf.level)/2)*sqrt(diag(covhat))
   } else {
-    ci_upper <- betahat+qt(p=1-(1-conf.level)/2, df=df)*sqrt(diag(covhat))
+    ci_upper <- betahat+qt(p=1-(1-conf.level)/2,df=df)*sqrt(diag(covhat))
     ci_lower <- betahat-qt(p=1-(1-conf.level)/2,df=df)*sqrt(diag(covhat))
   }
 
@@ -153,7 +155,7 @@ fdid_scb <- function(object=NULL,
                                 scb_lb= scb_lb_splinefun,
                                 event_t=timeVec),
                        ci=cbind(betahat, ci_upper, ci_lower, event_t=timeVec),
-                       data=list(beta=beta, cov=cov, t0=t0))
+                       data=list(beta=beta, cov=cov, t0=t0, df=df, conf.level=conf.level))
 
   class(final_output) <- "fdid_scb"
   return(final_output)

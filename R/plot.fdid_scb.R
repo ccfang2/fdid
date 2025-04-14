@@ -123,6 +123,10 @@ plot.fdid_scb <- function(object,
 
     if(isTRUE(post.trt)) {
       segments(x0=t0, y0=0, x1=end, y1=0, lty=3, lwd=4, col="red")
+
+      roots_vec <- sort(c(roots_vec, t0))
+      stat_sig_vec <- append(stat_sig_vec, stat_sig_vec[which(roots_vec==t0)-1], after=which(roots_vec==t0)-1-1)
+
       for (i in 1:(length(roots_vec)-1)) {
         if (stat_sig_vec[i]==1 & roots_vec[i]>=t0 ) {
           rect(roots_vec[i], y_range[1], roots_vec[i+1], y_range[2], col=rgb(0.5, 0.5, 0.5, alpha=0.7), border=NA)
@@ -384,6 +388,7 @@ plot.fdid_scb <- function(object,
     if(isTRUE(post.trt)) {
       segments(x0=t0, y0=0, x1=end, y1=0, lty=3, lwd=4, col="red")
       ShadeBetween(timeVec[timeVec>=t0], timeVec[timeVec>=t0], honest_ub_splinefun(timeVec[timeVec>=t0]), honest_lb_splinefun(timeVec[timeVec>=t0]), col=rgb(1,0,0,alpha=0.3), border=NA)
+      roots_vec <- sort(c(roots_vec, t0))
 
       for (i in 1:(length(roots_vec)-1) ) {
         if ( fun_stat_sig_vec((roots_vec[i]+roots_vec[i+1])/2)==1 & roots_vec[i]>=t0 ) {

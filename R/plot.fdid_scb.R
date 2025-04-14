@@ -97,9 +97,10 @@ plot.fdid_scb <- function(object,
       root     <- try(uniroot(fun, interval = interval)$root, silent = TRUE)
       roots[i] <- if(inherits(root, "try-error")) {NA} else root
     }
-    roots <- roots[!is.na(roots)]
+    #roots <- roots[!is.na(roots)]
+    roots <- sort(unique(roots[!is.na(roots)]))
 
-    roots_vec    <- c(start,roots,end)
+    roots_vec    <- sort(unique(c(start,roots,end)))
     stat_sig_vec <- rep(NA, length(roots_vec)-1)
     for (i in 1:(length(roots_vec)-1)) {
       test_point      <- (roots_vec[i]+roots_vec[i+1])/2
@@ -124,8 +125,10 @@ plot.fdid_scb <- function(object,
     if(isTRUE(post.trt)) {
       segments(x0=t0, y0=0, x1=end, y1=0, lty=3, lwd=4, col="red")
 
-      roots_vec <- sort(c(roots_vec, t0))
-      stat_sig_vec <- append(stat_sig_vec, stat_sig_vec[which(roots_vec==t0)-1], after=which(roots_vec==t0)-1-1)
+      if(!(t0 %in% roots_vec)) {
+        roots_vec <- sort(c(roots_vec, t0))
+        stat_sig_vec <- append(stat_sig_vec, stat_sig_vec[which(roots_vec==t0)-1], after=which(roots_vec==t0)-1-1)
+      }
 
       for (i in 1:(length(roots_vec)-1)) {
         if (stat_sig_vec[i]==1 & roots_vec[i]>=t0 ) {
@@ -286,7 +289,7 @@ plot.fdid_scb <- function(object,
       ts             <- seq(start, ta.t0, length.out=50*sum(timeVec<=ta.t0))
       betas_deriv    <- pracma::fderiv(betahat_splinefun, ts, n=1, method="backward")
       mean_abs_deriv <- mean(abs(betas_deriv))
-      slope       <- mean(betas_deriv)
+      slope          <- mean(betas_deriv)
 
       ftr_ub_ta_ub <- function (x) {ifelse(x>=ta.t0, (frmtr.mbar*mean_abs_deriv+slope)*(x-ta.t0)+ta_ub, NA)}
       ftr_lb_ta_ub <- function (x) {ifelse(x>=ta.t0, (-frmtr.mbar*mean_abs_deriv+slope)*(x-ta.t0)+ta_ub, NA)}
@@ -318,7 +321,7 @@ plot.fdid_scb <- function(object,
       root        <- try(uniroot(fun, interval = interval)$root, silent = TRUE)
       roots_UB[i] <- if(inherits(root, "try-error")) {NA} else root
     }
-    roots_UB <- roots_UB[!is.na(roots_UB)]
+    roots_UB <- sort(unique(roots_UB[!is.na(roots_UB)]))
 
     roots_LB <- vector("numeric", length = n.int)
     for (i in 1:n.int) {
@@ -327,11 +330,11 @@ plot.fdid_scb <- function(object,
       root        <- try(uniroot(fun, interval = interval)$root, silent = TRUE)
       roots_LB[i] <- if(inherits(root, "try-error")) {NA} else root
     }
-    roots_LB <- roots_LB[!is.na(roots_LB)]
+    roots_LB <-  sort(unique(roots_LB[!is.na(roots_LB)]))
 
-    roots_UB_vec <- c(start,roots_UB,end)
-    roots_LB_vec <- c(start,roots_LB,end)
-    roots_vec <- sort(c(start,end,roots_UB, roots_LB))
+    roots_UB_vec <- sort(unique(c(start,roots_UB,end)))
+    roots_LB_vec <- sort(unique(c(start,roots_LB,end)))
+    roots_vec    <- sort(unique(c(start,end,roots_UB, roots_LB)))
 
     stat_sig_UB_vec <- rep(NA, length(roots_UB_vec)-1)
     stat_sig_LB_vec <- rep(NA, length(roots_LB_vec)-1)
@@ -388,7 +391,8 @@ plot.fdid_scb <- function(object,
     if(isTRUE(post.trt)) {
       segments(x0=t0, y0=0, x1=end, y1=0, lty=3, lwd=4, col="red")
       ShadeBetween(timeVec[timeVec>=t0], timeVec[timeVec>=t0], honest_ub_splinefun(timeVec[timeVec>=t0]), honest_lb_splinefun(timeVec[timeVec>=t0]), col=rgb(1,0,0,alpha=0.3), border=NA)
-      roots_vec <- sort(c(roots_vec, t0))
+
+      if(!(t0 %in%  roots_vec)) {roots_vec <- sort(c(roots_vec, t0))}
 
       for (i in 1:(length(roots_vec)-1) ) {
         if ( fun_stat_sig_vec((roots_vec[i]+roots_vec[i+1])/2)==1 & roots_vec[i]>=t0 ) {

@@ -7,9 +7,11 @@
 \method{plot}{fdid_scb}(
   object,
   ta.t0 = NULL,
+  ta.s = NULL,
   frm.mbar = NULL,
   ftr.m = NULL,
   frmtr.mbar = NULL,
+  post.trt = FALSE,
   ci = TRUE,
   pos.legend = "top",
   ...
@@ -21,11 +23,15 @@
 \item{ta.t0}{a numeric value that indicates the time, right after which there is an anticipation of treatment. It should be
 greater than the minimal event time and no greater than t0 in \code{object}. If it is NULL, there is no anticipation.}
 
-\item{frm.mbar}{a numeric value of tuning parameter for functional relative magnitudes.}
+\item{ta.s}{a numeric value of tuning parameter for honest inference under treatment anticipation. If NULL, the critical value \eqn{t_{1-\alpha/2, df}} or \eqn{z_{1-\alpha/2}} is applied with the same \eqn{\alpha} used for constructing simultaneous confidence band. If no treatment anticipation is defined in \code{ta.t0}, the value of \code{ta.s} is ignored.}
 
-\item{ftr.m}{a numeric value of tuning parameter for functional trend restrictions.}
+\item{frm.mbar}{a numeric value of tuning parameter for honest inference under functional relative magnitudes.}
+
+\item{ftr.m}{a numeric value of tuning parameter for honest inference under functional trend restrictions.}
 
 \item{frmtr.mbar}{a numeric value of tuning parameter for combining functional relative magnitudes and functional trend restrictions.}
+
+\item{post.trt}{a logical value. If TRUE, only bounds for post-treatment periods are plotted and used for honest inference.}
 
 \item{ci}{a logical value. If TRUE, the point-wise confidence intervals are also plotted.}
 
@@ -55,7 +61,7 @@ plot(fdid_scb_est)
 ## honest inference under treatment anticipation
 plot(fdid_scb_est, ta.t0=-4)
 
-## honest inference under differential trend
+## honest inference under violation of parallel trends
 plot(fdid_scb_est, frm.mbar=0.3)
 }
 \references{

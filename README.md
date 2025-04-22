@@ -51,7 +51,7 @@ With an anticipation right after event time -3, one may see the time span over w
 
 ## Example 3: Honest Inference under Differential Trend of Functional Relative Magnitudes
 
-Following Example 1, we now suppose that, there is differential trend of functional relative magnitudes with tuning parameter $\overline{M}=1$.
+Following Example 1, we now suppose that, there is differential trend of functional relative magnitudes with control parameter $\overline{M}=1$.
 
 ``` r
 plot(fdid_scb_est, frm.mbar=1, pos.legend="bottom")
@@ -63,7 +63,7 @@ Under such a differential trend, the time span over which the treatment effect i
 
 ## Example 4: Honest Inference under Differential Trend of Functional Trend Restrictions
 
-Following Example 1, we now suppose that, there is differential trend of functional trend restrictions with tuning parameter $M=2$.
+Following Example 1, we now suppose that, there is differential trend of functional trend restrictions with control parameter $M=2$.
 
 ``` r
 plot(fdid_scb_est, ftr.m=2, pos.legend="bottom")
@@ -71,7 +71,7 @@ plot(fdid_scb_est, ftr.m=2, pos.legend="bottom")
 
 ![Example 4](man/figures/plot_scb_ftr.png)
 
-With this specific differential trend, the time span over which the treatment effect is uniformly significant is not so different from that without. It can be seen that the pre-trend, measured by the average of derivative of functional DiD estimate over pre-treatment time, is quite small. Hence, the inference result does not change too much from Example 1, even though the tuning parameter is not infinitesimal.
+With this specific differential trend, the time span over which the treatment effect is uniformly significant is not so different from that without. It can be seen that the pre-trend, measured by the average of derivative of functional DiD estimate over pre-treatment time, is quite small. Hence, the inference result does not change too much from Example 1, even though the control parameter is not infinitesimal.
 
 ## Contact
 Chencheng Fang, Email: [ccfang[at]uni-bonn.de](mailto:ccfang@uni-bonn.de),

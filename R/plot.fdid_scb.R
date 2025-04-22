@@ -113,7 +113,7 @@ plot.fdid_scb <- function(object,
     y_range <- range(c(betahat_splinefun(x_vals), scb_ub_splinefun(x_vals), scb_lb_splinefun(x_vals)), na.rm=TRUE)
 
     # draw plot
-    plot(timeVec, betahat,  type = "p", ylim =y_range, xlab = "Event Time", ylab = "", pch = 16, col = "blue", cex.axis=1.4, cex.lab=1.4)
+    plot(timeVec, betahat,  type = "p", ylim =y_range, xlab = "Event Time", ylab = "", pch = 16, col = "blue", cex.axis=1.4, cex.lab=1.4, ...)
     title(ylab=expression(hat(beta)), mgp=c(2.1,1,0), cex.lab=1.4)
     if(isTRUE(ci)) arrows(timeVec, ci_lower, timeVec, ci_upper, angle = 90, code = 3, length = 0.025, col = "blue4")
     grid()
@@ -291,10 +291,10 @@ plot.fdid_scb <- function(object,
       mean_abs_deriv <- mean(abs(betas_deriv))
       slope          <- mean(betas_deriv)
 
-      ftr_ub_ta_ub <- function (x) {ifelse(x>=ta.t0, (frmtr.mbar*mean_abs_deriv+slope)*(x-ta.t0)+ta_ub, NA)}
-      ftr_lb_ta_ub <- function (x) {ifelse(x>=ta.t0, (-frmtr.mbar*mean_abs_deriv+slope)*(x-ta.t0)+ta_ub, NA)}
-      ftr_ub_ta_lb <- function (x) {ifelse(x>=ta.t0, (frmtr.mbar*mean_abs_deriv+slope)*(x-ta.t0)+ta_lb, NA)}
-      ftr_lb_ta_lb <- function (x) {ifelse(x>=ta.t0, (-frmtr.mbar*mean_abs_deriv+slope)*(x-ta.t0)+ta_lb, NA)}
+      ftr_ub_ta_ub <- function (x) {ifelse(x>=ta.t0, (frmtr.mbar*mean_abs_deriv*abs(slope)+slope)*(x-ta.t0)+ta_ub, NA)}
+      ftr_lb_ta_ub <- function (x) {ifelse(x>=ta.t0, (-frmtr.mbar*mean_abs_deriv*abs(slope)+slope)*(x-ta.t0)+ta_ub, NA)}
+      ftr_ub_ta_lb <- function (x) {ifelse(x>=ta.t0, (frmtr.mbar*mean_abs_deriv*abs(slope)+slope)*(x-ta.t0)+ta_lb, NA)}
+      ftr_lb_ta_lb <- function (x) {ifelse(x>=ta.t0, (-frmtr.mbar*mean_abs_deriv*abs(slope)+slope)*(x-ta.t0)+ta_lb, NA)}
 
       x_vals <- seq(start, end, length.out=5*length(timeVec))
 
@@ -377,7 +377,7 @@ plot.fdid_scb <- function(object,
     x_vals  <- seq(start, end, length.out=5*length(timeVec))
     y_range <- range(c(betahat_splinefun(x_vals), scb_ub_splinefun(x_vals), scb_lb_splinefun(x_vals)), na.rm=TRUE)
 
-    plot(timeVec, betahat,  type = "p", ylim =y_range, xlab = "Event Time", ylab = "", pch = 16, col = "blue", cex.axis=1.4, cex.lab=1.4)
+    plot(timeVec, betahat,  type = "p", ylim =y_range, xlab = "Event Time", ylab = "", pch = 16, col = "blue", cex.axis=1.4, cex.lab=1.4, ...)
     title(ylab=expression(hat(beta)), mgp=c(2.1,1,0), cex.lab=1.4)
     grid()
 

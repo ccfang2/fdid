@@ -5,10 +5,10 @@
 #' @param object an object of class \code{"fdid_scb"}. The object to be plotted.
 #' @param ta.t0 a numeric value that indicates the time, right after which there is an anticipation of treatment. It should be
 #' greater than the minimal event time and no greater than t0 in \code{object}. If it is NULL, there is no anticipation.
-#' @param ta.s a numeric value of tuning parameter for honest inference under treatment anticipation. If NULL, the critical value \eqn{t_{1-\alpha/2, df}} or \eqn{z_{1-\alpha/2}} is applied with the same \eqn{\alpha} used for constructing simultaneous confidence band. If no treatment anticipation is defined in \code{ta.t0}, the value of \code{ta.s} is ignored.
-#' @param frm.mbar a numeric value of tuning parameter for honest inference under functional relative magnitudes.
-#' @param ftr.m a numeric value of tuning parameter for honest inference under functional trend restrictions.
-#' @param frmtr.mbar a numeric value of tuning parameter for combining functional relative magnitudes and functional trend restrictions.
+#' @param ta.s a numeric value of control parameter for honest inference under treatment anticipation. If NULL, the critical value \eqn{t_{1-\alpha/2, df}} or \eqn{z_{1-\alpha/2}} is applied with the same \eqn{\alpha} used for constructing simultaneous confidence band. If no treatment anticipation is defined in \code{ta.t0}, the value of \code{ta.s} is ignored.
+#' @param frm.mbar a numeric value of control parameter for honest inference under functional relative magnitudes.
+#' @param ftr.m a numeric value of control parameter for honest inference under functional trend restrictions.
+#' @param frmtr.mbar a numeric value of control parameter for combining functional relative magnitudes and functional trend restrictions.
 #' @param post.trt a logical value. If TRUE, only bounds for post-treatment periods are plotted and used for honest inference.
 #' @param ci a logical value. If TRUE, the point-wise confidence intervals are also plotted.
 #' @param pos.legend a character value of "top" or "bottom" that indicates the position of legend. If NULL, the legend is not printed.

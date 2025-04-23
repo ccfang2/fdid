@@ -291,10 +291,10 @@ plot.fdid_scb <- function(object,
       mean_abs_deriv <- mean(abs(betas_deriv))
       slope          <- mean(betas_deriv)
 
-      ftr_ub_ta_ub <- function (x) {ifelse(x>=ta.t0, (frmtr.mbar*mean_abs_deriv*abs(slope)+slope)*(x-ta.t0)+ta_ub, NA)}
-      ftr_lb_ta_ub <- function (x) {ifelse(x>=ta.t0, (-frmtr.mbar*mean_abs_deriv*abs(slope)+slope)*(x-ta.t0)+ta_ub, NA)}
-      ftr_ub_ta_lb <- function (x) {ifelse(x>=ta.t0, (frmtr.mbar*mean_abs_deriv*abs(slope)+slope)*(x-ta.t0)+ta_lb, NA)}
-      ftr_lb_ta_lb <- function (x) {ifelse(x>=ta.t0, (-frmtr.mbar*mean_abs_deriv*abs(slope)+slope)*(x-ta.t0)+ta_lb, NA)}
+      ftr_ub_ta_ub <- function (x) {ifelse(x>=ta.t0, (frmtr.mbar*mean_abs_deriv+slope)*(x-ta.t0)+ta_ub, NA)}
+      ftr_lb_ta_ub <- function (x) {ifelse(x>=ta.t0, (-frmtr.mbar*mean_abs_deriv+slope)*(x-ta.t0)+ta_ub, NA)}
+      ftr_ub_ta_lb <- function (x) {ifelse(x>=ta.t0, (frmtr.mbar*mean_abs_deriv+slope)*(x-ta.t0)+ta_lb, NA)}
+      ftr_lb_ta_lb <- function (x) {ifelse(x>=ta.t0, (-frmtr.mbar*mean_abs_deriv+slope)*(x-ta.t0)+ta_lb, NA)}
 
       x_vals <- seq(start, end, length.out=5*length(timeVec))
 

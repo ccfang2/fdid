@@ -12,6 +12,7 @@
 #' @param post.trt a logical value. If TRUE, only bounds for post-treatment periods are plotted and used for honest inference.
 #' @param ci a logical value. If TRUE, the point-wise confidence intervals are also plotted.
 #' @param pos.legend a character value of "top" or "bottom" that indicates the position of legend. If NULL, the legend is not printed.
+#' @param scale.legend a positive number that defines the size of legend. If \code{pos.legend} is NULL, the value of \code{scale.legend} is ignored.
 #' @param ... Additional arguments to be passed to \link[base]{plot}.
 #'
 #' @return The function returns a plot with simultaneous confidence band for event study coefficients in a functional framework,
@@ -30,13 +31,15 @@
 #' cat("The reference time is ", LWdata$t0, ". If not NULL, the input 'ta.t0' in function 'plot' should be smaller than this value.", sep="")
 #'
 #' ## simultaneous inference
-#' plot(fdid_scb_est)
+#' plot(fdid_scb_est, scale.legend=1.4)
+#' ## adding a label for Y-axis
+#' title(ylab="Effects of Duty-to-Bargain Laws", cex.lab=1.4)
 #'
 #' ## honest inference under treatment anticipation
-#' plot(fdid_scb_est, ta.t0=-4)
+#' plot(fdid_scb_est, ta.t0=-3, scale.legend=1.4)
 #'
 #' ## honest inference under violation of parallel trends
-#' plot(fdid_scb_est, frm.mbar=0.3)
+#' plot(fdid_scb_est, frm.mbar=0.4, scale.legend=1.4)
 plot.fdid_scb <- function(object,
                           ta.t0=NULL,
                           ta.s=NULL,
@@ -46,6 +49,7 @@ plot.fdid_scb <- function(object,
                           post.trt=FALSE,
                           ci=TRUE,
                           pos.legend="top",
+                          scale.legend=1,
                           ...) {
 
   # give out a warn
@@ -67,6 +71,7 @@ plot.fdid_scb <- function(object,
   if (!is.logical(post.trt)) stop("The input 'post.trt' should be logical.")
   if (!is.logical(ci)) stop("The input 'ci' should be logical.")
   if (!is.null(pos.legend) && !pos.legend %in% c("top", "bottom")) stop("The input 'pos.legend' must be 'top', 'bottom', or NULL.")
+  if (!is.numeric(scale.legend) || length(scale.legend) != 1 || scale.legend <= 0 || !is.finite(scale.legend)) stop("The input 'scale.legend' must be a positive number.")
 
   # extract data from object
   betahat <- object$data$beta[,1]
@@ -114,7 +119,6 @@ plot.fdid_scb <- function(object,
 
     # draw plot
     plot(timeVec, betahat,  type = "p", ylim =y_range, xlab = "Event Time", ylab = "", pch = 16, col = "blue", cex.axis=1.4, cex.lab=1.4, ...)
-    title(ylab=expression(hat(beta)), mgp=c(2.1,1,0), cex.lab=1.4)
     if(isTRUE(ci)) arrows(timeVec, ci_lower, timeVec, ci_upper, angle = 90, code = 3, length = 0.025, col = "blue4")
     grid()
 
@@ -159,11 +163,11 @@ plot.fdid_scb <- function(object,
       ylim <- par("usr")[3:4]
 
       text              <- "Reference value          "
-      text_width        <- strwidth(text)
-      fixed_line_width  <- strwidth("Reference")
-      extra_padding     <- strwidth("   ", cex=1)
+      text_width        <- strwidth(text, cex = scale.legend)
+      fixed_line_width  <- strwidth("Reference", cex=scale.legend)
+      extra_padding     <- strwidth("   ", cex=scale.legend)
       rect_width        <- text_width+extra_padding+fixed_line_width
-      rect_height       <- diff(ylim)*0.08
+      rect_height       <- diff(ylim)*0.08*scale.legend
       rect_x1           <- mean(xlim)-rect_width/2
       rect_x2           <- mean(xlim)+rect_width/2
 
@@ -179,8 +183,8 @@ plot.fdid_scb <- function(object,
       if(pos.legend=="top")    {line_y <- rect_y1+rect_height*0.4}
       if(pos.legend=="bottom") {line_y <- rect_y1-rect_height*0.4}
 
-      segments(line_x1, line_y, line_x2, line_y, col = "red", lwd = 4, lty = 3)
-      text(line_x2 + left_padding, line_y, text, cex = 1, adj = 0)
+      segments(line_x1, line_y, line_x2, line_y, col = "red", lwd = 4*scale.legend, lty = 3)
+      text(line_x2 + left_padding, line_y, text, cex = scale.legend, adj = 0)
     }
   } else {
 
@@ -378,7 +382,6 @@ plot.fdid_scb <- function(object,
     y_range <- range(c(betahat_splinefun(x_vals), scb_ub_splinefun(x_vals), scb_lb_splinefun(x_vals)), na.rm=TRUE)
 
     plot(timeVec, betahat,  type = "p", ylim =y_range, xlab = "Event Time", ylab = "", pch = 16, col = "blue", cex.axis=1.4, cex.lab=1.4, ...)
-    title(ylab=expression(hat(beta)), mgp=c(2.1,1,0), cex.lab=1.4)
     grid()
 
     if(isTRUE(ci)) arrows(timeVec, ci_lower, timeVec, ci_upper, angle = 90, code = 3, length = 0.025, col = "blue4")
@@ -428,13 +431,13 @@ plot.fdid_scb <- function(object,
       if (ta.t0==t0 & (!is.null(frm.mbar) | !is.null(ftr.m) | !is.null(frmtr.mbar))) {upper_text <- "Reference values with PT violations"; lower_text <- "Reference value without PT violations          "}
       if (ta.t0!=t0 & is.null(frm.mbar) & is.null(ftr.m) & is.null(frmtr.mbar)) {upper_text <- "Reference values with anticipation"; lower_text <- "Reference value without anticipation          "}
 
-      text_width_upper   <- strwidth(upper_text) # calculate the width of the text dynamically
-      text_width_lower   <- strwidth(lower_text)
-      fixed_rect_b_width <- strwidth("Reference") # define a longer fixed width for the red rectangle (B) and red dashed line
-      fixed_line_width   <- strwidth("Reference")
-      extra_padding      <- strwidth("   ", cex=1) # add extra padding for the white rectangle to avoid text touching borders
+      text_width_upper   <- strwidth(upper_text, cex=scale.legend) # calculate the width of the text dynamically
+      text_width_lower   <- strwidth(lower_text, cex=scale.legend)
+      fixed_rect_b_width <- strwidth("Reference", cex=scale.legend) # define a longer fixed width for the red rectangle (B) and red dashed line
+      fixed_line_width   <- strwidth("Reference", cex=scale.legend)
+      extra_padding      <- strwidth("   ", cex=scale.legend) # add extra padding for the white rectangle to avoid text touching borders
       rect_width         <- max(text_width_upper, text_width_lower)+extra_padding+fixed_rect_b_width  # calculate the width of the white rectangle (A) based on the longest text
-      rect_height        <- diff(ylim)*0.1 # define the height for the white rectangle (A)
+      rect_height        <- diff(ylim)*0.1*scale.legend # define the height for the white rectangle (A)
       rect_x1            <- mean(xlim)-rect_width/2 # define positions for the white rectangle A (centered)
       rect_x2            <- mean(xlim)+rect_width/2
 
@@ -451,7 +454,7 @@ plot.fdid_scb <- function(object,
       if(pos.legend=="bottom") {rect_b_y2 <- rect_y1-rect_height*0.5; rect_b_y1 <- rect_b_y2+rect_height*0.35}
 
       rect(rect_b_x1, rect_b_y1, rect_b_x2, rect_b_y2, col = rgb(1, 0, 0, alpha = 0.3), border = NA)  # draw red rectangle B (transparent, no border)
-      text(rect_b_x2 + left_padding, (rect_b_y1 + rect_b_y2) / 2, upper_text, cex = 1,  adj = 0)  # add upper text next to red rectangle B
+      text(rect_b_x2 + left_padding, (rect_b_y1 + rect_b_y2) / 2, upper_text, cex = scale.legend,  adj = 0)  # add upper text next to red rectangle B
 
       line_x1 <- rect_b_x1  # define position for the red dashed line (aligned with lower text) # same as red rectangle start
       line_x2 <- rect_b_x2  # same fixed width as red rectangle
@@ -459,8 +462,8 @@ plot.fdid_scb <- function(object,
       if(pos.legend=="top")    {line_y <- rect_y1+rect_height*0.3}
       if(pos.legend=="bottom") {line_y <- rect_y2+rect_height*0.3}
 
-      segments(line_x1, line_y, line_x2, line_y, col = "red", lwd = 4, lty = 3)  # draw the red dashed line (fixed width)
-      text(line_x2 + left_padding, line_y, lower_text, cex = 1, adj = 0)  # add lower text next to the red dashed line
+      segments(line_x1, line_y, line_x2, line_y, col = "red", lwd = 4*scale.legend, lty = 3)  # draw the red dashed line (fixed width)
+      text(line_x2 + left_padding, line_y, lower_text, cex = scale.legend, adj = 0)  # add lower text next to the red dashed line
     }
   }
   options(warn=1)

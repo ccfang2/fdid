@@ -14,6 +14,7 @@
   post.trt = FALSE,
   ci = TRUE,
   pos.legend = "top",
+  scale.legend = 1,
   ...
 )
 }
@@ -23,19 +24,21 @@
 \item{ta.t0}{a numeric value that indicates the time, right after which there is an anticipation of treatment. It should be
 greater than the minimal event time and no greater than t0 in \code{object}. If it is NULL, there is no anticipation.}
 
-\item{ta.s}{a numeric value of tuning parameter for honest inference under treatment anticipation. If NULL, the critical value \eqn{t_{1-\alpha/2, df}} or \eqn{z_{1-\alpha/2}} is applied with the same \eqn{\alpha} used for constructing simultaneous confidence band. If no treatment anticipation is defined in \code{ta.t0}, the value of \code{ta.s} is ignored.}
+\item{ta.s}{a numeric value of control parameter for honest inference under treatment anticipation. If NULL, the critical value \eqn{t_{1-\alpha/2, df}} or \eqn{z_{1-\alpha/2}} is applied with the same \eqn{\alpha} used for constructing simultaneous confidence band. If no treatment anticipation is defined in \code{ta.t0}, the value of \code{ta.s} is ignored.}
 
-\item{frm.mbar}{a numeric value of tuning parameter for honest inference under functional relative magnitudes.}
+\item{frm.mbar}{a numeric value of control parameter for honest inference under functional relative magnitudes.}
 
-\item{ftr.m}{a numeric value of tuning parameter for honest inference under functional trend restrictions.}
+\item{ftr.m}{a numeric value of control parameter for honest inference under functional trend restrictions.}
 
-\item{frmtr.mbar}{a numeric value of tuning parameter for combining functional relative magnitudes and functional trend restrictions.}
+\item{frmtr.mbar}{a numeric value of control parameter for combining functional relative magnitudes and functional trend restrictions.}
 
 \item{post.trt}{a logical value. If TRUE, only bounds for post-treatment periods are plotted and used for honest inference.}
 
 \item{ci}{a logical value. If TRUE, the point-wise confidence intervals are also plotted.}
 
 \item{pos.legend}{a character value of "top" or "bottom" that indicates the position of legend. If NULL, the legend is not printed.}
+
+\item{scale.legend}{a positive number that defines the size of legend. If \code{pos.legend} is NULL, the value of \code{scale.legend} is ignored.}
 
 \item{...}{Additional arguments to be passed to \link[base]{plot}.}
 }
@@ -56,13 +59,15 @@ fdid_scb_est <- fdid_scb(beta=LWdata$beta, cov=LWdata$cov, t0=LWdata$t0)
 cat("The reference time is ", LWdata$t0, ". If not NULL, the input 'ta.t0' in function 'plot' should be smaller than this value.", sep="")
 
 ## simultaneous inference
-plot(fdid_scb_est)
+plot(fdid_scb_est, scale.legend=1.4)
+## adding a label for Y-axis
+title(ylab="Effects of Duty-to-Bargain Laws", cex.lab=1.4)
 
 ## honest inference under treatment anticipation
-plot(fdid_scb_est, ta.t0=-4)
+plot(fdid_scb_est, ta.t0=-3, scale.legend=1.4)
 
 ## honest inference under violation of parallel trends
-plot(fdid_scb_est, frm.mbar=0.3)
+plot(fdid_scb_est, frm.mbar=0.4, scale.legend=1.4)
 }
 \references{
 Fang, C. and Liebl, D. (2025). Honest Causal Inference with Difference-in-Differences: A Functional Data Perspective.

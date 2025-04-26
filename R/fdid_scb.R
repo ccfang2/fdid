@@ -124,7 +124,7 @@ fdid_scb <- function(object=NULL,
   # compute tau function
   start   <- timeVec[1]
   end     <- timeVec[length(timeVec)]
-  hat.tau <- cov2tau_fun2(covhat_spline, grid.min=start, grid.max=end)
+  hat.tau <- ffscb::cov2tau_fun(covhat_spline)
 
   # compute simultaneous confidence band
   if(is.null(df)){

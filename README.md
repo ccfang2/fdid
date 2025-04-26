@@ -26,7 +26,7 @@ We hereby use event study estimates from Gallagher (2014)[^3] as an example.
 library(fdid)
 data(Gdata)
 fdid_scb_est <- fdid_scb(beta=Gdata$beta, cov=Gdata$cov, t0=Gdata$t0)
-plot(fdid_scb_est, pos.legend="bottom")
+plot(fdid_scb_est, pos.legend="bottom", scale.legend=1.4)
 ```
 
 We first load the data from our package, and then we use the function `fdid_scb()` to compute simultaneous confidence band from using the estimates of event study coefficients, covariances and reference time point, and finally we use the generic function `plot()` to derive a figure as follows.
@@ -42,7 +42,7 @@ As is seen, the reference time in this example is at event time -1. The gray are
 Following Example 1, we now suppose that, right after event time -3, there is an anticipation of treatment.
 
 ``` r
-plot(fdid_scb_est, ta.t0=-3, pos.legend="bottom")
+plot(fdid_scb_est, ta.t0=-3, pos.legend="bottom", scale.legend=1.4)
 ```
 
 ![Example 2](man/figures/plot_scb_ta.png)
@@ -54,7 +54,7 @@ With an anticipation right after event time -3, one may see the time span over w
 Following Example 1, we now suppose that, there is differential trend of functional relative magnitudes with control parameter $\overline{M}=1$.
 
 ``` r
-plot(fdid_scb_est, frm.mbar=1, pos.legend="bottom")
+plot(fdid_scb_est, frm.mbar=1, pos.legend="bottom", scale.legend=1.4)
 ```
 
 ![Example 3](man/figures/plot_scb_frm.png)
@@ -66,7 +66,7 @@ Under such a differential trend, the time span over which the treatment effect i
 Following Example 1, we now suppose that, there is differential trend of functional trend restrictions with control parameter $M=2$.
 
 ``` r
-plot(fdid_scb_est, ftr.m=2, pos.legend="bottom")
+plot(fdid_scb_est, ftr.m=2, pos.legend="bottom", scale.legend=1.4)
 ```
 
 ![Example 4](man/figures/plot_scb_ftr.png)

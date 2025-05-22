@@ -10,8 +10,7 @@ fdid_scb(
   cov = NULL,
   t0 = NULL,
   df = NULL,
-  conf.level = 0.95,
-  n_int = 8
+  conf.level = 0.95
 )
 }
 \arguments{
@@ -28,8 +27,6 @@ corresponding event time. The estimate of coefficient at reference time should b
 \item{df}{degree of freedom for the t-distributed based bands. If NULL, Gaussian distributed bands are computed.}
 
 \item{conf.level}{confidence level for the bands to achieve.}
-
-\item{n_int}{number of intervals for the piece-wise linear confidence bounds. See Liebl and Reimherr (2023) for details.}
 }
 \value{
 The \code{fdid_scb} function returns a list containing three objects:

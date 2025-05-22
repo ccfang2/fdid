@@ -3,13 +3,12 @@
 #' In staggered design, our estimation does not suffer from the so-called negative weighting problem, since we use carefully-chosen non-negative weights to consolidate
 #' estimates from each subgroup. See Fang and Liebl(2025) for detailed estimation method.
 #'
-#' @param data a data frame in which the first variable should be the outcome variable, and the last two variables are time and unit indices. Covariates are placed
-#' after the outcome but before time and unit variables. Outcome and covariates should be numeric.
-#' @param treatment a data frame that indicates the time, right after the treatment is given, for each unit. NA implies that the unit is never treated/control.
+#' @param data a data frame in which the first variable should be the outcome variable, and the latter two variables are time and unit indices. The outcome variable should be numeric.
+#' @param treatment a data frame in which the first variable is the unit indices; the second variable indicates the time, right after the treatment is given, for each unit.
+#' NA implies that the unit is never treated/control. All pre-determined covariates are placed afterwards. Covariates should be numeric.
 #'
-#' @return The \code{fdid} function returns a list which includes the estimates of event study coefficients and their covariance. It also contains the estimates of
-#' time-invariant coefficients for covariates and their standard errors at each period. In the output, the event time 0 is considered as the reference time. The output is
-#' an object of S3 class \code{"fdid"}.
+#' @return The \code{fdid} function returns a list which includes the estimates of event study coefficients and their covariance. In the output, the event time 0 is considered as the
+#' reference time. The output is an object of S3 class \code{"fdid"}.
 #' @import dplyr
 #' @export
 #' @references Fang, C. and Liebl, D. (2025). Honest Causal Inference with Difference-in-Differences: A Functional Data Perspective.
@@ -28,8 +27,8 @@ fdid <- function(data,
   options(warn=-1)
 
   # rename columns of data frames
-  colnames(data)[c(1, ncol(data)-1, ncol(data))] <- c("y", "t", "i")
-  colnames(treatment) <- c("i","t0")
+  colnames(data) <- c("y", "t", "i")
+  colnames(treatment)[1:2] <- c("i","t0")
 
   #check conditions
   if(!is.numeric(data$t)) stop("The time index should be numeric.")
@@ -41,6 +40,9 @@ fdid <- function(data,
   # join the two data frames
   data                <- data[order(data$i, data$t), ]
   treatment           <- treatment[order(treatment$i), ]
+
+  treatment[,-(1:2)] <- apply( treatment[,-(1:2)], 2, function(x) x-mean(x))
+
   data                <- dplyr::left_join(data, treatment, by="i") # we need to left join them so that we can have a data list with the name of t0
   data_list           <- split(data, ifelse(is.na(data$t0), "NA", data$t0))
 
@@ -50,11 +52,16 @@ fdid <- function(data,
     ## apply two way transformation on the data frame 'data'
     data_nonstagger        <- rbind(data_list[[as.character(t0)]], data_list[["NA"]])
     data_nonstagger        <- subset(data_nonstagger, select = -c(t0))
-    var_names              <- setdiff(colnames(data_nonstagger), c("t","i"))
+    #var_names              <- setdiff(colnames(data_nonstagger), c("t","i"))
     t_i_sorted             <- cbind(data_nonstagger$t, data_nonstagger$i)[order(data_nonstagger$i, data_nonstagger$t),]
     t_sorted               <- t_i_sorted[,1]
     i_sorted               <- t_i_sorted[,2]
-    data_nonstagger_transf <- data_nonstagger %>% dplyr::mutate(across(all_of(var_names), ~tw_transf(.x,t,i)$x)) %>% dplyr::select(all_of(var_names)) %>% dplyr::mutate(t=t_sorted, i=i_sorted)
+
+
+
+    #data_nonstagger_transf <- data_nonstagger %>% dplyr::mutate(across(all_of(var_names), ~tw_transf(.x,t,i)$x)) %>% dplyr::select(all_of(var_names)) %>% dplyr::mutate(t=t_sorted, i=i_sorted)
+    data_nonstagger_transf <- data_nonstagger %>% dplyr::mutate(across(y, ~tw_transf(.x,t,i)$x)) %>% dplyr::select(y) %>% dplyr::mutate(t=t_sorted, i=i_sorted)
+
 
     ## pre-process the data frame 'treatment'
     treatment_nonstagger          <- treatment[treatment$t0==t0 | is.na(treatment$t0),]
@@ -76,11 +83,11 @@ fdid <- function(data,
     gamma0          <- gamma[gamma[,"t"]==t0, -2]
     beta            <- cbind(beta = gamma[,"gamma"]-gamma0, t = t_unique)
 
-    ## estimate xi
+    ## estimate xi_tilde
     if (K != 1){
-      xi           <- cbind(t(sapply(est_list, function(x) x[-K])), t_unique)
-      rownames(xi) <- NULL
-      colnames(xi) <- c(var_names[-1], "t")
+      xi_tilde           <- cbind(t(sapply(est_list, function(x) x[-K])), t_unique)
+      rownames(xi_tilde) <- NULL
+      colnames(xi_tilde) <- c(var_names[-1], "t")
     }
 
     ## estimate covariance of beta
@@ -98,17 +105,17 @@ fdid <- function(data,
     cov_beta[which(t_unique==t0),] <- 0; cov_beta[,which(t_unique==t0)] <- 0
     rownames(cov_beta)             <- colnames(cov_beta) <- t_unique
 
-    ## standard error of xi
+    ## standard error of xi_tilde
     if (K != 1) {
-      est_var_list    <- lapply(t_unique, function(x) (solve(1/N_nonstagger*crossprod(as.matrix(subset(data_nonstagger_transf[data_nonstagger_transf$t==x,], select=-c(y,t,i))))) %*% (1/(N_nonstagger-K)*t(as.matrix(subset(data_nonstagger_transf[data_nonstagger_transf$t==x,], select=-c(y,t,i)))) %*% diag(as.vector(resid_transf[[as.character(x)]]^2), nrow = N_nonstagger) %*% as.matrix(subset(data_nonstagger_transf[data_nonstagger_transf$t==x,], select=-c(y,t,i)))) %*% solve(1/N_nonstagger*crossprod(as.matrix(subset(data_nonstagger_transf[data_nonstagger_transf$t==x,], select=-c(y,t,i))))))/N_nonstagger)
-      se_xi           <- cbind(t(sapply(est_var_list, function(x) sqrt(diag(x)[-K]))), t_unique)
-      colnames(se_xi) <- c(var_names[-1], "t")
+      est_var_list          <- lapply(t_unique, function(x) (solve(1/N_nonstagger*crossprod(as.matrix(subset(data_nonstagger_transf[data_nonstagger_transf$t==x,], select=-c(y,t,i))))) %*% (1/(N_nonstagger-K)*t(as.matrix(subset(data_nonstagger_transf[data_nonstagger_transf$t==x,], select=-c(y,t,i)))) %*% diag(as.vector(resid_transf[[as.character(x)]]^2), nrow = N_nonstagger) %*% as.matrix(subset(data_nonstagger_transf[data_nonstagger_transf$t==x,], select=-c(y,t,i)))) %*% solve(1/N_nonstagger*crossprod(as.matrix(subset(data_nonstagger_transf[data_nonstagger_transf$t==x,], select=-c(y,t,i))))))/N_nonstagger)
+      se_xi_tilde           <- cbind(t(sapply(est_var_list, function(x) sqrt(diag(x)[-K]))), t_unique)
+      colnames(se_xi_tilde) <- c(var_names[-1], "t")
     }
 
     ## return output
     output <- if (K != 1){
       list(beta = list(coef = beta, cov = cov_beta),
-           xi   = list(coef = xi,   se  = se_xi))
+           xi_tilde   = list(coef = xi_tilde,   se  = se_xi_tilde))
     } else {
       list(beta = list(coef = beta, cov = cov_beta))
     }
@@ -171,13 +178,13 @@ fdid <- function(data,
     na_indicator     <- ifelse(na_indicator, NA, 1)
     cov_beta_stagger <- cov_beta_stagger*na_indicator
 
-    # collect all estimates of xi and its standard errors
-    if(length(fdid_nonstagger_list[[1]])!=1) {xi_list <- lapply(fdid_nonstagger_list, function(x) x$xi)}
+    # collect all estimates of xi_tilde and its standard errors
+    if(length(fdid_nonstagger_list[[1]])!=1) {xi_tilde_list <- lapply(fdid_nonstagger_list, function(x) x$xi_tilde)}
 
     # final output
     final_output <- if(length(fdid_nonstagger_list[[1]])!=1) {
       list(beta=list(coef= beta_stagger, cov=cov_beta_stagger),
-           xi=xi_list,
+           xi_tilde=xi_tilde_list,
            t0=0,
            df=NULL)
       } else {

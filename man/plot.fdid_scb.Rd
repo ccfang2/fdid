@@ -59,9 +59,10 @@ fdid_scb_est <- fdid_scb(beta=LWdata$beta, cov=LWdata$cov, t0=LWdata$t0)
 cat("The reference time is ", LWdata$t0, ". If not NULL, the input 'ta.t0' in function 'plot' should be smaller than this value.", sep="")
 
 ## simultaneous inference
+par(cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4)
 plot(fdid_scb_est, scale.legend=1.4)
 ## adding a label for Y-axis
-title(ylab="Effects of Duty-to-Bargain Laws", cex.lab=1.4)
+title(ylab="Effects of Duty-to-Bargain Laws")
 
 ## honest inference under treatment anticipation
 plot(fdid_scb_est, ta.t0=-3, scale.legend=1.4)

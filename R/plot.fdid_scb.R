@@ -31,9 +31,10 @@
 #' cat("The reference time is ", LWdata$t0, ". If not NULL, the input 'ta.t0' in function 'plot' should be smaller than this value.", sep="")
 #'
 #' ## simultaneous inference
+#' par(cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4)
 #' plot(fdid_scb_est, scale.legend=1.4)
 #' ## adding a label for Y-axis
-#' title(ylab="Effects of Duty-to-Bargain Laws", cex.lab=1.4)
+#' title(ylab="Effects of Duty-to-Bargain Laws")
 #'
 #' ## honest inference under treatment anticipation
 #' plot(fdid_scb_est, ta.t0=-3, scale.legend=1.4)
@@ -118,7 +119,7 @@ plot.fdid_scb <- function(object,
     y_range <- range(c(betahat_splinefun(x_vals), scb_ub_splinefun(x_vals), scb_lb_splinefun(x_vals)), na.rm=TRUE)
 
     # draw plot
-    plot(timeVec, betahat,  type = "p", ylim =y_range, xlab = "Event Time", ylab = "", pch = 16, col = "blue", cex.axis=1.4, cex.lab=1.4, ...)
+    plot(timeVec, betahat,  type = "p", ylim =y_range, xlab = "Event Time", ylab = "", pch = 16, col = "blue", ...)
     if(isTRUE(ci)) arrows(timeVec, ci_lower, timeVec, ci_upper, angle = 90, code = 3, length = 0.025, col = "blue4")
     grid()
 
@@ -381,7 +382,7 @@ plot.fdid_scb <- function(object,
     x_vals  <- seq(start, end, length.out=5*length(timeVec))
     y_range <- range(c(betahat_splinefun(x_vals), scb_ub_splinefun(x_vals), scb_lb_splinefun(x_vals)), na.rm=TRUE)
 
-    plot(timeVec, betahat,  type = "p", ylim =y_range, xlab = "Event Time", ylab = "", pch = 16, col = "blue", cex.axis=1.4, cex.lab=1.4, ...)
+    plot(timeVec, betahat,  type = "p", ylim =y_range, xlab = "Event Time", ylab = "", pch = 16, col = "blue", ...)
     grid()
 
     if(isTRUE(ci)) arrows(timeVec, ci_lower, timeVec, ci_upper, angle = 90, code = 3, length = 0.025, col = "blue4")

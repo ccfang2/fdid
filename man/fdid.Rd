@@ -7,15 +7,14 @@
 fdid(data, treatment)
 }
 \arguments{
-\item{data}{a data frame in which the first variable should be the outcome variable, and the last two variables are time and unit indices. Covariates are placed
-after the outcome but before time and unit variables. Outcome and covariates should be numeric.}
+\item{data}{a data frame in which the first variable should be the outcome variable, and the latter two variables are time and unit indices. The outcome variable should be numeric.}
 
-\item{treatment}{a data frame that indicates the time, right after the treatment is given, for each unit. NA implies that the unit is never treated/control.}
+\item{treatment}{a data frame in which the first variable is the unit indices; the second variable indicates the time, right after the treatment is given, for each unit.
+NA implies that the unit is never treated/control. All pre-determined covariates are placed afterwards. Covariates should be numeric.}
 }
 \value{
-The \code{fdid} function returns a list which includes the estimates of event study coefficients and their covariance. It also contains the estimates of
-time-invariant coefficients for covariates and their standard errors at each period. In the output, the event time 0 is considered as the reference time. The output is
-an object of S3 class \code{"fdid"}.
+The \code{fdid} function returns a list which includes the estimates of event study coefficients and their covariance. In the output, the event time 0 is considered as the
+reference time. The output is an object of S3 class \code{"fdid"}.
 }
 \description{
 The \code{fdid} function is used to estimate the event study coefficients and the covariance matrix in non-staggered or staggered adoption design.

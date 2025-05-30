@@ -78,6 +78,6 @@ Chencheng Fang, Email: [ccfang[at]uni-bonn.de](mailto:ccfang@uni-bonn.de),
 Institute of Finance and Statistics, University of Bonn
 
 ## Reference
-[^1]: Fang, C. and Liebl, D. (2025). Honest Causal Inference with Difference-in-Differences: A Functional Data Perspective. Working Paper
+[^1]: Fang, C. and Liebl, D. (2025). Honest Difference-in-Differences Using Event Study Plots: A Functional Data Approach. Working Paper
 [^2]: Liebl, D. and M. Reimherr (2023). Fast and fair simultaneous confidence bands for functional parameters. Journal of the Royal Statistical Society Series B: Statistical Methodology 85(3), 842–868
 [^3]: Gallagher, J. (2014). Learning about an Infrequent Event: Evidence from Flood Insurance Take-Up in the United States. American Economic Journal: Applied Economics 6(3), 206–33.

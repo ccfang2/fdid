@@ -40,8 +40,7 @@ fdid <- function(data,
   # join the two data frames
   data                <- data[order(data$i, data$t), ]
   treatment           <- treatment[order(treatment$i), ]
-
-  treatment[,-(1:2)] <- apply( treatment[,-(1:2)], 2, function(x) x-mean(x))
+  treatment[,-(1:2)]  <- apply( treatment[,-(1:2)], 2, function(x) x-mean(x))
 
   data                <- dplyr::left_join(data, treatment, by="i") # we need to left join them so that we can have a data list with the name of t0
   data_list           <- split(data, ifelse(is.na(data$t0), "NA", data$t0))
@@ -52,16 +51,12 @@ fdid <- function(data,
     ## apply two way transformation on the data frame 'data'
     data_nonstagger        <- rbind(data_list[[as.character(t0)]], data_list[["NA"]])
     data_nonstagger        <- subset(data_nonstagger, select = -c(t0))
-    #var_names              <- setdiff(colnames(data_nonstagger), c("t","i"))
+    var_names              <- setdiff(colnames(data_nonstagger), c("t","i"))
     t_i_sorted             <- cbind(data_nonstagger$t, data_nonstagger$i)[order(data_nonstagger$i, data_nonstagger$t),]
     t_sorted               <- t_i_sorted[,1]
     i_sorted               <- t_i_sorted[,2]
 
-
-
-    #data_nonstagger_transf <- data_nonstagger %>% dplyr::mutate(across(all_of(var_names), ~tw_transf(.x,t,i)$x)) %>% dplyr::select(all_of(var_names)) %>% dplyr::mutate(t=t_sorted, i=i_sorted)
     data_nonstagger_transf <- data_nonstagger %>% dplyr::mutate(across(y, ~tw_transf(.x,t,i)$x)) %>% dplyr::select(y) %>% dplyr::mutate(t=t_sorted, i=i_sorted)
-
 
     ## pre-process the data frame 'treatment'
     treatment_nonstagger          <- treatment[treatment$t0==t0 | is.na(treatment$t0),]

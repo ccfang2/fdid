@@ -18,7 +18,7 @@ You can install the development version of `fdid` from [GitHub](https://github.c
 devtools::install_github("ccfang2/fdid")
 ```
 
-## Example 1: Simultaneous Inference
+## Example 1: Classic (Non-Honest) Simultaneous Inference
 
 We hereby use event study estimates from Gallagher (2014)[^3] as an example. 
 

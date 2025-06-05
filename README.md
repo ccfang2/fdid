@@ -7,7 +7,7 @@
 ![GitHub Repo stars](https://img.shields.io/github/stars/ccfang2/fdid?style=social)
 
 
-> The R package `fdid` allows users to implement the method proposed in Fang and Liebl (2025)[^1]. In this paper, we present a novel functional perspective on Difference-in-Differences (DiD) that allows for honest inference using event study plots under violations of parallel trends and/or no-anticipation assumptions. We use the algorithm of so-called fast and fair simultaneous confidence band from Liebl and Reimherr (2023)[^2] to construct the simultaneous band in our plots.
+> The R package `fdid` allows users to implement the method proposed in Fang and Liebl (2025)[^1]. In this paper, we present a novel functional perspective on Difference-in-Differences (DiD) that allows for honest inference using event study plots under violations of parallel trends and/or no-anticipation assumptions. You may find a presentation of the paper in my YouTube [video](https://www.youtube.com/watch?v=h0KCv8y9Apw). We use the algorithm of so-called fast and fair simultaneous confidence band from Liebl and Reimherr (2023)[^2] to construct the simultaneous band in our plots.
 
 ## Installation
 

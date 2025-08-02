@@ -25,7 +25,7 @@
 #' @references Liebl, D. and M. Reimherr (2023). Fast and fair simultaneous confidence bands for functional parameters. Journal of
 #' the Royal Statistical Society Series B: Statistical Methodology 85(3), 842–868
 #'
-#' @seealso \link{fdid}, \link[ffscb]{confidence_band}, \link[ffscb]{confidence_band_fragm}
+#' @seealso \link{fdid}, \link[ffscb]{confidence_band}, \link[ffscb]{confidence_band_fragm}, \link{cov_intrpl}
 #'
 #' @examples
 #' data(LWdata)
@@ -106,14 +106,15 @@ fdid_scb <- function(object=NULL,
 
   betahat_spline    <- spline(x=timeVec, y=betahat, n=len_spline, method="natural")$y
   betahat_splinefun <- splinefun(x=timeVec, y=betahat, method="natural")
+  covhat_spline     <- cov_intrpl(cov=covhat, grid=timeVec, n_intrpl=len_spline)
 
-  if (any(is.na(covhat))) {
-    covhat_spline <- apply(covhat, 2, function(col) { obs_idx <- !is.na(col); obs_event_t <- timeVec[obs_idx]; obs_col <- col[obs_idx]; spline_fit <- spline(obs_event_t, obs_col, xout = timeVec_spline, method = "natural")$y; spline_fit[timeVec_spline > max(obs_event_t) | timeVec_spline < min(obs_event_t)] <- NA; return(spline_fit)})
-    covhat_spline <- apply(covhat_spline, 1, function(row) { obs_idx <- !is.na(row); obs_event_t <- timeVec[obs_idx]; obs_row <- row[obs_idx]; spline_fit <- spline(obs_event_t, obs_row, xout = timeVec_spline, method = "natural")$y; spline_fit[timeVec_spline > max(obs_event_t) | timeVec_spline < min(obs_event_t)] <- NA; return(spline_fit)})
-  } else{
-    covhat_spline <- apply(covhat, 2, function(col) spline(x=timeVec, y=col, n=len_spline, method="natural")$y)
-    covhat_spline <- apply(covhat_spline, 1, function(row) spline(x=timeVec, y=row, n=len_spline, method="natural")$y)
-  }
+  # if (any(is.na(covhat))) {
+  #   covhat_spline <- apply(covhat, 2, function(col) { obs_idx <- !is.na(col); obs_event_t <- timeVec[obs_idx]; obs_col <- col[obs_idx]; spline_fit <- spline(obs_event_t, obs_col, xout = timeVec_spline, method = "natural")$y; spline_fit[timeVec_spline > max(obs_event_t) | timeVec_spline < min(obs_event_t)] <- NA; return(spline_fit)})
+  #   covhat_spline <- apply(covhat_spline, 1, function(row) { obs_idx <- !is.na(row); obs_event_t <- timeVec[obs_idx]; obs_row <- row[obs_idx]; spline_fit <- spline(obs_event_t, obs_row, xout = timeVec_spline, method = "natural")$y; spline_fit[timeVec_spline > max(obs_event_t) | timeVec_spline < min(obs_event_t)] <- NA; return(spline_fit)})
+  # } else{
+  #   covhat_spline <- apply(covhat, 2, function(col) spline(x=timeVec, y=col, n=len_spline, method="natural")$y)
+  #   covhat_spline <- apply(covhat_spline, 1, function(row) spline(x=timeVec, y=row, n=len_spline, method="natural")$y)
+  # }
 
   # compute tau function for pre-treatment periods
   betahat_spline_pre     <- betahat_spline[which(timeVec_spline<=t0)]

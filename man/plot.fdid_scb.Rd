@@ -43,15 +43,11 @@ greater than the minimal event time and no greater than t0 in \code{object}. If 
 \item{...}{Additional arguments to be passed to \link[base]{plot}.}
 }
 \value{
-The function returns a plot with simultaneous confidence band for event study coefficients in a functional framework,
-together with bounds for honest inference, if properly defined.
+The function returns a plot with simultaneous confidence band for event study coefficients in a functional framework, together with bounds for honest inference, if properly defined.
 }
 \description{
 This function is an S3 method for \link[base]{plot}, specifically designed for objects of class \code{"fdid_scb"}.
 It plots simultaneous confidence band with bounds for honest inference.
-}
-\note{
-The inference result around the reference time point (i.e. between two event time closest to the reference time) should be treated with caution.
 }
 \examples{
 data(LWdata)

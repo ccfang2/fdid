@@ -57,5 +57,5 @@ Liebl, D. and M. Reimherr (2023). Fast and fair simultaneous confidence bands fo
 the Royal Statistical Society Series B: Statistical Methodology 85(3), 842–868
 }
 \seealso{
-\link{fdid}, \link[ffscb]{confidence_band}, \link[ffscb]{confidence_band_fragm}
+\link{fdid}, \link[ffscb]{confidence_band}, \link[ffscb]{confidence_band_fragm}, \link{cov_intrpl}
 }

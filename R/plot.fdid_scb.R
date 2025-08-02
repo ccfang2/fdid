@@ -15,9 +15,7 @@
 #' @param scale.legend a positive number that defines the size of legend. If \code{pos.legend} is NULL, the value of \code{scale.legend} is ignored.
 #' @param ... Additional arguments to be passed to \link[base]{plot}.
 #'
-#' @return The function returns a plot with simultaneous confidence band for event study coefficients in a functional framework,
-#' together with bounds for honest inference, if properly defined.
-#' @note The inference result around the reference time point (i.e. between two event time closest to the reference time) should be treated with caution.
+#' @return The function returns a plot with simultaneous confidence band for event study coefficients in a functional framework, together with bounds for honest inference, if properly defined.
 #'
 #' @import pracma
 #' @export
@@ -54,8 +52,8 @@ plot.fdid_scb <- function(object,
                           ...) {
 
   # give out a warn
-  warning_note <- paste("The inference result around the reference time t=", object$data$t0, "(i.e. between two event time closest to the reference time) should be treated with caution.")
-  warning(warning_note)
+  # warning_note <- paste("The inference result around the reference time t=", object$data$t0, "(i.e. between two event time closest to the reference time) should be treated with caution.")
+  # warning(warning_note)
 
   options(warn=-1)
 
@@ -121,7 +119,7 @@ plot.fdid_scb <- function(object,
     # draw plot
     plot(timeVec, betahat,  type = "p", ylim =y_range, xlab = "Event Time", ylab = "", pch = 16, col = "blue", ...)
     if(isTRUE(ci)) arrows(timeVec, ci_lower, timeVec, ci_upper, angle = 90, code = 3, length = 0.025, col = "blue4")
-    grid()
+    #grid()
 
     curve(betahat_splinefun, add=TRUE, lty=1)
     curve(scb_ub_splinefun, add=TRUE, lty=1)
@@ -129,11 +127,33 @@ plot.fdid_scb <- function(object,
 
     if(isTRUE(post.trt)) {
       segments(x0=t0, y0=0, x1=end, y1=0, lty=3, lwd=4, col="red")
+      roots_vec_temp <- sort(unique(c(roots_vec, timeVec[which(timeVec==t0)-1], timeVec[which(timeVec==t0)+1])))
 
-      if(!(t0 %in% roots_vec)) {
-        roots_vec <- sort(c(roots_vec, t0))
-        stat_sig_vec <- append(stat_sig_vec, stat_sig_vec[which(roots_vec==t0)-1], after=which(roots_vec==t0)-1-1)
+      intervals <- data.frame(
+        left  = head(roots_vec_temp, -1),
+        right = tail(roots_vec_temp, -1)
+      )
+
+      stat_sig_vec_temp <- rep(NA, nrow(intervals))
+
+      for (i in 1:nrow(intervals)) {
+        l <- intervals$left[i]
+        r <- intervals$right[i]
+        if (l >= timeVec[which(timeVec==t0)-1] && r <= timeVec[which(timeVec==t0)+1]) {
+          stat_sig_vec_temp[i] <- 0
+        } else {
+          idx <- which(roots_vec <= l)[length(which(roots_vec  <= l))]
+          stat_sig_vec_temp[i] <- stat_sig_vec[idx]
+        }
       }
+
+      stat_sig_vec <- stat_sig_vec_temp
+      roots_vec    <- roots_vec_temp
+
+      # if(!(t0 %in% roots_vec)) {
+      #   roots_vec <- sort(c(roots_vec, t0))
+      #   stat_sig_vec <- append(stat_sig_vec, stat_sig_vec[which(roots_vec==t0)-1], after=which(roots_vec==t0)-1-1)
+      # }
 
       for (i in 1:(length(roots_vec)-1)) {
         if (stat_sig_vec[i]==1 & roots_vec[i]>=t0 ) {
@@ -146,6 +166,29 @@ plot.fdid_scb <- function(object,
       }
     } else {
       segments(x0=start, y0=0, x1=end, y1=0, lty=3, lwd=4, col="red")
+      roots_vec_temp <- sort(unique(c(roots_vec, timeVec[which(timeVec==t0)-1], timeVec[which(timeVec==t0)+1])))
+
+      intervals <- data.frame(
+        left  = head(roots_vec_temp, -1),
+        right = tail(roots_vec_temp, -1)
+      )
+
+      stat_sig_vec_temp <- rep(NA, nrow(intervals))
+
+      for (i in 1:nrow(intervals)) {
+        l <- intervals$left[i]
+        r <- intervals$right[i]
+        if (l >= timeVec[which(timeVec==t0)-1] && r <= timeVec[which(timeVec==t0)+1]) {
+          stat_sig_vec_temp[i] <- 0
+        } else {
+          idx <- which(roots_vec <= l)[length(which(roots_vec  <= l))]
+          stat_sig_vec_temp[i] <- stat_sig_vec[idx]
+        }
+      }
+
+      stat_sig_vec <- stat_sig_vec_temp
+      roots_vec    <- roots_vec_temp
+
       for (i in 1:(length(roots_vec)-1)) {
         if (stat_sig_vec[i]==1) {
           rect(roots_vec[i], y_range[1], roots_vec[i+1], y_range[2], col=rgb(0.5, 0.5, 0.5, alpha=0.7), border=NA)
@@ -375,7 +418,7 @@ plot.fdid_scb <- function(object,
     fun_stat_sig_UB_vec <- Vectorize(fun_stat_sig_UB_vec)
     fun_stat_sig_LB_vec <- Vectorize(fun_stat_sig_LB_vec)
 
-    fun_stat_sig_vec <- function(x) {if(fun_stat_sig_UB_vec(x) == fun_stat_sig_LB_vec(x)) fun_stat_sig_UB_vec(x) else 0}
+    fun_stat_sig_vec <- function(x) {if(fun_stat_sig_UB_vec(x) != fun_stat_sig_LB_vec(x) || (x >= timeVec[which(timeVec==t0)-1] && x <= timeVec[which(timeVec==t0)+1])) 0 else fun_stat_sig_UB_vec(x)}
     fun_stat_sig_vec <- Vectorize(fun_stat_sig_vec)
 
     # draw plots
@@ -383,7 +426,7 @@ plot.fdid_scb <- function(object,
     y_range <- range(c(betahat_splinefun(x_vals), scb_ub_splinefun(x_vals), scb_lb_splinefun(x_vals)), na.rm=TRUE)
 
     plot(timeVec, betahat,  type = "p", ylim =y_range, xlab = "Event Time", ylab = "", pch = 16, col = "blue", ...)
-    grid()
+    #grid()
 
     if(isTRUE(ci)) arrows(timeVec, ci_lower, timeVec, ci_upper, angle = 90, code = 3, length = 0.025, col = "blue4")
     curve(betahat_splinefun, add=TRUE, lty=1)
@@ -396,7 +439,8 @@ plot.fdid_scb <- function(object,
       segments(x0=t0, y0=0, x1=end, y1=0, lty=3, lwd=4, col="red")
       ShadeBetween(timeVec[timeVec>=t0], timeVec[timeVec>=t0], honest_ub_splinefun(timeVec[timeVec>=t0]), honest_lb_splinefun(timeVec[timeVec>=t0]), col=rgb(1,0,0,alpha=0.3), border=NA)
 
-      if(!(t0 %in%  roots_vec)) {roots_vec <- sort(c(roots_vec, t0))}
+      roots_vec <- sort(unique(c(roots_vec, timeVec[which(timeVec==t0)-1], timeVec[which(timeVec==t0)+1])))
+      # if(!(t0 %in%  roots_vec)) {roots_vec <- sort(c(roots_vec, t0))}
 
       for (i in 1:(length(roots_vec)-1) ) {
         if ( fun_stat_sig_vec((roots_vec[i]+roots_vec[i+1])/2)==1 & roots_vec[i]>=t0 ) {
@@ -410,6 +454,8 @@ plot.fdid_scb <- function(object,
     } else {
       segments(x0=start, y0=0, x1=end, y1=0, lty=3, lwd=4, col="red")
       ShadeBetween(timeVec, timeVec, honest_ub_splinefun(timeVec), honest_lb_splinefun(timeVec), col=rgb(1,0,0,alpha=0.3), border=NA)
+
+      roots_vec <- sort(unique(c(roots_vec, timeVec[which(timeVec==t0)-1], timeVec[which(timeVec==t0)+1])))
 
       for (i in 1:(length(roots_vec)-1) ) {
         if ( fun_stat_sig_vec((roots_vec[i]+roots_vec[i+1])/2)==1  ) {

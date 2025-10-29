@@ -8,6 +8,7 @@
 #' of \code{n_intrpl} equidistant points from the minimum to the maximum of \code{grid}.
 #'
 #' @return The \code{cov_spline} function returns a numeric matrix of covariance interpolation.
+#' @import splines2
 #' @export
 #'
 #' @references Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference.

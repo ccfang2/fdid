@@ -15,6 +15,7 @@ Remotes: lidom/ffscb
 Imports:
 	stats,
 	dplyr,
+	splines2,
 	pracma,
 	ffscb
 Encoding: UTF-8

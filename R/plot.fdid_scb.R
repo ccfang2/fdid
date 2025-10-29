@@ -20,7 +20,7 @@
 #' @import pracma
 #' @export
 #'
-#' @references Fang, C. and Liebl, D. (2025). Honest Causal Inference with Difference-in-Differences: A Functional Data Perspective.
+#' @references Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference.
 #' @seealso \link{fdid_scb}
 #'
 #' @examples
@@ -157,7 +157,7 @@ plot.fdid_scb <- function(object,
 
       for (i in 1:(length(roots_vec)-1)) {
         if (stat_sig_vec[i]==1 & roots_vec[i]>=t0 ) {
-          rect(roots_vec[i], y_range[1], roots_vec[i+1], y_range[2], col=rgb(0.5, 0.5, 0.5, alpha=0.7), border=NA)
+          rect(roots_vec[i], y_range[1], roots_vec[i+1], y_range[2], col=rgb(0.5, 0.5, 0.5, alpha=0.4), border=NA) #alpha=0.7
         } else {
           if (stat_sig_vec[i]==-1 & roots_vec[i]>=t0) {
             rect(roots_vec[i], y_range[1], roots_vec[i+1], y_range[2], col=rgb(0.5, 0.5, 0.5, alpha=0.4), border=NA)
@@ -191,7 +191,7 @@ plot.fdid_scb <- function(object,
 
       for (i in 1:(length(roots_vec)-1)) {
         if (stat_sig_vec[i]==1) {
-          rect(roots_vec[i], y_range[1], roots_vec[i+1], y_range[2], col=rgb(0.5, 0.5, 0.5, alpha=0.7), border=NA)
+          rect(roots_vec[i], y_range[1], roots_vec[i+1], y_range[2], col=rgb(0.5, 0.5, 0.5, alpha=0.4), border=NA) #alpha=0.7
         } else {
           if (stat_sig_vec[i]==-1) {
             rect(roots_vec[i], y_range[1], roots_vec[i+1], y_range[2], col=rgb(0.5, 0.5, 0.5, alpha=0.4), border=NA)
@@ -206,9 +206,11 @@ plot.fdid_scb <- function(object,
       xlim <- par("usr")[1:2]
       ylim <- par("usr")[3:4]
 
-      text              <- "Reference value          "
+      #text              <- "Reference value          "
+      text              <- "Classical Reference Line          "
       text_width        <- strwidth(text, cex = scale.legend)
-      fixed_line_width  <- strwidth("Reference", cex=scale.legend)
+      #fixed_line_width  <- strwidth("Reference", cex=scale.legend)
+      fixed_line_width  <- strwidth("Classical", cex=scale.legend)
       extra_padding     <- strwidth("   ", cex=scale.legend)
       rect_width        <- text_width+extra_padding+fixed_line_width
       rect_height       <- diff(ylim)*0.08*scale.legend
@@ -444,7 +446,7 @@ plot.fdid_scb <- function(object,
 
       for (i in 1:(length(roots_vec)-1) ) {
         if ( fun_stat_sig_vec((roots_vec[i]+roots_vec[i+1])/2)==1 & roots_vec[i]>=t0 ) {
-          rect(roots_vec[i], y_range[1], roots_vec[i+1], y_range[2], col=rgb(0.5, 0.5, 0.5, alpha=0.7), border=NA)
+          rect(roots_vec[i], y_range[1], roots_vec[i+1], y_range[2], col=rgb(0.5, 0.5, 0.5, alpha=0.4), border=NA) #alpha=0.7
         } else {
           if (fun_stat_sig_vec((roots_vec[i]+roots_vec[i+1])/2)==-1 & roots_vec[i]>=t0 ) {
             rect(roots_vec[i], y_range[1], roots_vec[i+1], y_range[2], col=rgb(0.5, 0.5, 0.5, alpha=0.4), border=NA)
@@ -459,7 +461,7 @@ plot.fdid_scb <- function(object,
 
       for (i in 1:(length(roots_vec)-1) ) {
         if ( fun_stat_sig_vec((roots_vec[i]+roots_vec[i+1])/2)==1  ) {
-          rect(roots_vec[i], y_range[1], roots_vec[i+1], y_range[2], col=rgb(0.5, 0.5, 0.5, alpha=0.7), border=NA)
+          rect(roots_vec[i], y_range[1], roots_vec[i+1], y_range[2], col=rgb(0.5, 0.5, 0.5, alpha=0.4), border=NA) #alpha=0.7
         } else {
           if (fun_stat_sig_vec((roots_vec[i]+roots_vec[i+1])/2)==-1) {
             rect(roots_vec[i], y_range[1], roots_vec[i+1], y_range[2], col=rgb(0.5, 0.5, 0.5, alpha=0.4), border=NA)
@@ -474,14 +476,20 @@ plot.fdid_scb <- function(object,
       xlim <- par("usr")[1:2]
       ylim <- par("usr")[3:4]
 
-      if (ta.t0!=t0 & (!is.null(frm.mbar) | !is.null(ftr.m) | !is.null(frmtr.mbar))) {upper_text <- "Reference values with anticipation and PT violations"; lower_text <- "Reference value without anticipation or PT violations          "}
-      if (ta.t0==t0 & (!is.null(frm.mbar) | !is.null(ftr.m) | !is.null(frmtr.mbar))) {upper_text <- "Reference values with PT violations"; lower_text <- "Reference value without PT violations          "}
-      if (ta.t0!=t0 & is.null(frm.mbar) & is.null(ftr.m) & is.null(frmtr.mbar)) {upper_text <- "Reference values with anticipation"; lower_text <- "Reference value without anticipation          "}
+      # if (ta.t0!=t0 & (!is.null(frm.mbar) | !is.null(ftr.m) | !is.null(frmtr.mbar))) {upper_text <- "Reference values with anticipation and PT violations"; lower_text <- "Reference value without anticipation or PT violations          "}
+      # if (ta.t0==t0 & (!is.null(frm.mbar) | !is.null(ftr.m) | !is.null(frmtr.mbar))) {upper_text <- "Reference values with PT violations"; lower_text <- "Reference value without PT violations          "}
+      # if (ta.t0!=t0 & is.null(frm.mbar) & is.null(ftr.m) & is.null(frmtr.mbar)) {upper_text <- "Reference values with anticipation"; lower_text <- "Reference value without anticipation          "}
+
+      if (ta.t0!=t0 & (!is.null(frm.mbar) | !is.null(ftr.m) | !is.null(frmtr.mbar))) {upper_text <- "Honest Reference Band"; lower_text <- "Classical Reference Line          "}
+      if (ta.t0==t0 & (!is.null(frm.mbar) | !is.null(ftr.m) | !is.null(frmtr.mbar))) {upper_text <- "Honest Reference Band"; lower_text <- "Classical Reference Line          "}
+      if (ta.t0!=t0 & is.null(frm.mbar) & is.null(ftr.m) & is.null(frmtr.mbar)) {upper_text <- "Honest Reference Band"; lower_text <- "Classical Reference Line          "}
 
       text_width_upper   <- strwidth(upper_text, cex=scale.legend) # calculate the width of the text dynamically
       text_width_lower   <- strwidth(lower_text, cex=scale.legend)
-      fixed_rect_b_width <- strwidth("Reference", cex=scale.legend) # define a longer fixed width for the red rectangle (B) and red dashed line
-      fixed_line_width   <- strwidth("Reference", cex=scale.legend)
+      #fixed_rect_b_width <- strwidth("Reference", cex=scale.legend) # define a longer fixed width for the red rectangle (B) and red dashed line
+      fixed_rect_b_width <- strwidth("Classical", cex=scale.legend) # define a longer fixed width for the red rectangle (B) and red dashed line
+      #fixed_line_width   <- strwidth("Reference", cex=scale.legend)
+      fixed_line_width   <- strwidth("Classical", cex=scale.legend)
       extra_padding      <- strwidth("   ", cex=scale.legend) # add extra padding for the white rectangle to avoid text touching borders
       rect_width         <- max(text_width_upper, text_width_lower)+extra_padding+fixed_rect_b_width  # calculate the width of the white rectangle (A) based on the longest text
       rect_height        <- diff(ylim)*0.1*scale.legend # define the height for the white rectangle (A)

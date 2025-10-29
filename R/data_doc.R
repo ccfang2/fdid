@@ -11,7 +11,7 @@
 #' The second data frame 'simulated_stagger_treatment' has 200 rows and 2 columns:
 #' \describe{
 #'  \item{i}{Unit index. It also corresponds to the unit index in data frame 'simulated_stagger_data'.}
-#'  \item{t0}{Treatment Timing. It can be -0.5, 0 and 0.5. NA indicates control units.}
+#'  \item{t0}{Reference Period. It can be -0.5, 0 and 0.5. NA indicates control units.}
 #'  \item{x1, x2}{Pre-determined covariates.}
 #' }
 NULL
@@ -32,7 +32,7 @@ NULL
 #' The second data frame 'simulated_nonstagger_treatment' has 200 rows and 2 columns:
 #' \describe{
 #'  \item{i}{Unit index. It also corresponds to the unit index in data frame 'simulated_nonstagger_data'.}
-#'  \item{t0}{Treatment Timing. NA indicates control units.}
+#'  \item{t0}{Reference Period. NA indicates control units.}
 #'  \item{x1, x2}{Pre-determined covariates.}
 #' }
 NULL
@@ -50,7 +50,7 @@ NULL
 #' \describe{
 #'  \item{beta}{Estimates of event study coefficients.}
 #'  \item{cov}{Estimates of covariance matrix.}
-#'  \item{t0}{Reference time of DiD design.}
+#'  \item{t0}{Reference period of DiD design.}
 #'  \item{paper}{Paper indexing.}
 #' }
 #' @references
@@ -71,7 +71,7 @@ NULL
 #' \describe{
 #'  \item{beta}{Estimates of event study coefficients.}
 #'  \item{cov}{Estimates of covariance matrix.}
-#'  \item{t0}{Reference time of DiD design.}
+#'  \item{t0}{Reference period of DiD design.}
 #'  \item{paper}{Paper indexing.}
 #' }
 #' @references
@@ -93,7 +93,7 @@ NULL
 #' \describe{
 #'  \item{beta}{Estimates of event study coefficients.}
 #'  \item{cov}{Estimates of covariance matrix.}
-#'  \item{t0}{Reference time of DiD design.}
+#'  \item{t0}{Reference period of DiD design.}
 #'  \item{paper}{Paper indexing.}
 #' }
 #' @references
@@ -114,11 +114,30 @@ NULL
 #' \describe{
 #'  \item{beta}{Estimates of event study coefficients.}
 #'  \item{cov}{Estimates of covariance matrix.}
-#'  \item{t0}{Reference time of DiD design.}
+#'  \item{t0}{Reference period of DiD design.}
 #'  \item{paper}{Paper indexing.}
 #' }
 #' @references
 #' Gallagher, J. (2014). Learning about an Infrequent Event: Evidence from Flood Insurance Take-Up in the United States. American Economic Journal: Applied Economics 6(3), 206–33.
+NULL
+
+
+
+
+
+#' Event study estimates from Chen et al. (2025)
+#' @docType data
+#' @name CCYdata
+#'
+#' @format A list, containing 4 objects:
+#' \describe{
+#'  \item{beta}{Estimates of event study coefficients.}
+#'  \item{cov}{Estimates of covariance matrix.}
+#'  \item{t0}{Reference period of DiD design.}
+#'  \item{paper}{Paper indexing.}
+#' }
+#' @references
+#' Chen, H., Chen, Y. and Yang, Q. (2025). Women in the courtroom: Technology and Justice. The Review of Economic Studies, 1–28.
 NULL
 
 

@@ -1,5 +1,5 @@
 Package: fdid
-Title: Honest Causal Inference with Difference-in-Differences: A Functional Data Perspective
+Title: Making Event Study Plots Honest: A Functional Data Approach to Causal Inference.
 Version: 0.0.1
 Authors@R: c(person(given  = "Chencheng", 
 		    family = "Fang", 

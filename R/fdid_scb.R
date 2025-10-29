@@ -1,7 +1,7 @@
 #' Compute simultaneous confidence band for event study coefficients in functional DiD framework
 #' @description The \code{fdid_scb} function is used to compute simultaneous confidence band for event study coefficients in a functional
 #' framework, together with the point-wise confidence intervals at observable event time. We adopt the algorithm of the so-called fast and
-#' fair simultaneous confidence bands. See Liebl and Reimherr(2023) for details.
+#' fair simultaneous confidence bands. See Liebl and Reimherr (2023) for details.
 #'
 #' @param object an object of S3 class \code{"fdid"}, which is an output of the function \link{fdid}. If it is provided, arguments 'beta',
 #' 'cov' and 't0' are ignored.
@@ -21,11 +21,11 @@
 #' @import ffscb
 #' @export
 #'
-#' @references Fang, C. and Liebl, D. (2025). Honest Causal Inference with Difference-in-Differences: A Functional Data Perspective.
+#' @references Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference.
 #' @references Liebl, D. and M. Reimherr (2023). Fast and fair simultaneous confidence bands for functional parameters. Journal of
 #' the Royal Statistical Society Series B: Statistical Methodology 85(3), 842–868
 #'
-#' @seealso \link{fdid}, \link[ffscb]{confidence_band}, \link[ffscb]{confidence_band_fragm}, \link{cov_intrpl}
+#' @seealso \link{fdid}, \link[ffscb]{confidence_band}, \link[ffscb]{confidence_band_fragm}, \link{cov_spline}
 #'
 #' @examples
 #' data(LWdata)
@@ -106,7 +106,7 @@ fdid_scb <- function(object=NULL,
 
   betahat_spline    <- spline(x=timeVec, y=betahat, n=len_spline, method="natural")$y
   betahat_splinefun <- splinefun(x=timeVec, y=betahat, method="natural")
-  covhat_spline     <- cov_intrpl(cov=covhat, grid=timeVec, n_intrpl=len_spline)
+  covhat_spline     <- cov_spline(cov=covhat, grid=timeVec, n_intrpl=len_spline)
 
   # if (any(is.na(covhat))) {
   #   covhat_spline <- apply(covhat, 2, function(col) { obs_idx <- !is.na(col); obs_event_t <- timeVec[obs_idx]; obs_col <- col[obs_idx]; spline_fit <- spline(obs_event_t, obs_col, xout = timeVec_spline, method = "natural")$y; spline_fit[timeVec_spline > max(obs_event_t) | timeVec_spline < min(obs_event_t)] <- NA; return(spline_fit)})

@@ -67,7 +67,7 @@ plot(fdid_scb_est, ta.t0=-3, scale.legend=1.4)
 plot(fdid_scb_est, frm.mbar=0.4, scale.legend=1.4)
 }
 \references{
-Fang, C. and Liebl, D. (2025). Honest Causal Inference with Difference-in-Differences: A Functional Data Perspective.
+Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference.
 }
 \seealso{
 \link{fdid_scb}

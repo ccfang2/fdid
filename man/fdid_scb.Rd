@@ -40,7 +40,7 @@ The output is an object of S3 class \code{"fdid_scb"}.
 \description{
 The \code{fdid_scb} function is used to compute simultaneous confidence band for event study coefficients in a functional
 framework, together with the point-wise confidence intervals at observable event time. We adopt the algorithm of the so-called fast and
-fair simultaneous confidence bands. See Liebl and Reimherr(2023) for details.
+fair simultaneous confidence bands. See Liebl and Reimherr (2023) for details.
 }
 \examples{
 data(LWdata)
@@ -51,11 +51,11 @@ fdid_est2 <- fdid(data=simulated_stagger_data, treatment=simulated_stagger_treat
 fdid_scb_est2 <- fdid_scb(object=fdid_est2)
 }
 \references{
-Fang, C. and Liebl, D. (2025). Honest Causal Inference with Difference-in-Differences: A Functional Data Perspective.
+Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference.
 
 Liebl, D. and M. Reimherr (2023). Fast and fair simultaneous confidence bands for functional parameters. Journal of
 the Royal Statistical Society Series B: Statistical Methodology 85(3), 842–868
 }
 \seealso{
-\link{fdid}, \link[ffscb]{confidence_band}, \link[ffscb]{confidence_band_fragm}, \link{cov_intrpl}
+\link{fdid}, \link[ffscb]{confidence_band}, \link[ffscb]{confidence_band_fragm}, \link{cov_spline}
 }

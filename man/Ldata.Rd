@@ -9,7 +9,7 @@ A list, containing 4 objects:
 \describe{
 \item{beta}{Estimates of event study coefficients.}
 \item{cov}{Estimates of covariance matrix.}
-\item{t0}{Reference time of DiD design.}
+\item{t0}{Reference period of DiD design.}
 \item{paper}{Paper indexing.}
 }
 }

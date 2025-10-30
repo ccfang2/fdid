@@ -7,7 +7,8 @@
 ![GitHub Repo stars](https://img.shields.io/github/stars/ccfang2/fdid?style=social)
 
 
-> The R package `fdid` allows users to implement the method proposed in Fang and Liebl (2025)[^1]. In this paper, we present a novel functional perspective on Difference-in-Differences (DiD) that allows for honest inference using event study plots under violations of parallel trends and/or no-anticipation assumptions. You may find a presentation of the paper in my YouTube [video](https://www.youtube.com/watch?v=h0KCv8y9Apw). We use the algorithm of so-called fast and fair simultaneous confidence band from Liebl and Reimherr (2023)[^2] to construct the simultaneous band in our plots.
+> The R package `fdid` allows users to implement the method proposed in Fang and Liebl (2025)[^1]. In this paper, we present a novel functional perspective on Difference-in-Differences (DiD) that allows for honest inference using event study plots under violations of parallel trends and/or no-anticipation assumptions. We use the algorithm of so-called fast and fair simultaneous confidence band from Liebl and Reimherr (2023)[^2] to construct the simultaneous band in our plots.
+> You may find a presentation of the paper in my YouTube [video](https://www.youtube.com/watch?v=h0KCv8y9Apw). Also, a Shiny app via which users can adjust their honest reference bands interactively can be accessed in [https://ccfang2.shinyapps.io/fdidHonestInference/](https://ccfang2.shinyapps.io/fdidHonestInference/).
 
 ## Installation
 
@@ -31,13 +32,13 @@ plot(fdid_scb_est, pos.legend="bottom", scale.legend=1.4)
 
 We first load the data from our package, and then we use the function `fdid_scb()` to compute simultaneous confidence band from using the estimates of event study coefficients, covariances and reference time point, and finally we use the generic function `plot()` to derive a figure as follows.
 
-![Example 1](man/figures/plot_scb.png)
+![](man/figures/plot_scb.png)
 
 As is seen, the reference time in this example is at event time -1. The gray area indicates the time span over which the treatment effect is uniformly significant under our simultaneous confidence band. Traditional confidence intervals are also plotted. The intervals fail to take into account the multiple testing problem, so they are typically narrower than our band. 
 
-> **Note:** If you do not have estimates of event study coefficients and covariances, you may use our function `fdid()` to estimate them from using your original data. Our function allows the estimation under both non-staggered and staggered DiD designs. In particularly, we consider the negative weighting problem of estimating event study coefficients under staggered designs and use carefully chosen non-negative weights to sum up estimates from different treatment subgroups.
+If you do not have estimates of event study coefficients and covariances, you may use our function `fdid()` to estimate them from using your original data. Our function allows the estimation under both non-staggered and staggered DiD designs. In particularly, we consider the negative weighting problem of estimating event study coefficients under staggered designs and use carefully chosen non-negative weights to sum up estimates from different treatment subgroups.
 
-## Example 2: Honest Inference under Treatment anticipation
+## Example 2: Honest Causal Inference under Treatment Anticipation
 
 Following Example 1, we now suppose that, right after event time -3, there is an anticipation of treatment.
 
@@ -45,37 +46,38 @@ Following Example 1, we now suppose that, right after event time -3, there is an
 plot(fdid_scb_est, ta.t0=-3, pos.legend="bottom", scale.legend=1.4)
 ```
 
-![Example 2](man/figures/plot_scb_ta.png)
+![](man/figures/plot_scb_ta.png)
 
 With an anticipation right after event time -3, one may see the time span over which the treatment effect is uniformly significant shrinks. Under treatment anticipation, the null hypothesis for our test includes all values within the pink bounds.
 
-## Example 3: Honest Inference under Differential Trend of Functional Relative Magnitudes
+## Example 3: Honest Causal Inference under Differential Trend with Relative Magnitudes Reference Band
 
-Following Example 1, we now suppose that, there is differential trend of functional relative magnitudes with control parameter $\overline{M}=1$.
+Following Example 1, we now suppose that, there is differential trend of relative magnitudes with control parameter $\overline{M}=1$.
 
 ``` r
 plot(fdid_scb_est, frm.mbar=1, pos.legend="bottom", scale.legend=1.4)
 ```
 
-![Example 3](man/figures/plot_scb_frm.png)
+![](man/figures/plot_scb_frm.png)
 
 Under such a differential trend, the time span over which the treatment effect is uniformly significant is even smaller. It can be seen that the average absolute derivative of functional DiD estimate over pre-treatment time is quite large, so our bounds for honest inference is also large.
 
-## Example 4: Honest Inference under Differential Trend of Functional Trend Restrictions
+## Example 4: Honest Inference under Differential Trend with Trend Restrictions Reference Band
 
-Following Example 1, we now suppose that, there is differential trend of functional trend restrictions with control parameter $M=2$.
+Following Example 1, we now suppose that, there is differential trend of trend restrictions with control parameter $M=2$.
 
 ``` r
 plot(fdid_scb_est, ftr.m=2, pos.legend="bottom", scale.legend=1.4)
 ```
 
-![Example 4](man/figures/plot_scb_ftr.png)
+![](man/figures/plot_scb_ftr.png)
 
 With this specific differential trend, the time span over which the treatment effect is uniformly significant is not so different from that without. It can be seen that the pre-trend, measured by the average of derivative of functional DiD estimate over pre-treatment time, is quite small. Hence, the inference result does not change too much from Example 1, even though the control parameter is not infinitesimal.
 
 ## Contact
 Chencheng Fang, Email: [ccfang[at]uni-bonn.de](mailto:ccfang@uni-bonn.de),
 Institute of Finance and Statistics, University of Bonn
+Hausdorff Center for Mathematics
 
 ## Reference
 [^1]: Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. Working Paper

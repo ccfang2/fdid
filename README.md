@@ -1,4 +1,4 @@
-# fdid: Making Event Study Plots Honest: A Functional Data Approach to Causal Inference <img src="man/figures/fdid_badge.png" align="right" alt="" width="155" />
+# fdid: Making Event Study Plots Honest <img src="man/figures/fdid_badge.png" align="right" alt="" width="155" />
 
 [![PRs Welcome](https://img.shields.io/badge/PRs-welcome-brightgreen.svg?style=flat-square)](https://makeapullrequest.com)
 ![GitHub last commit](https://img.shields.io/github/last-commit/ccfang2/fdid?logo=GitHub)

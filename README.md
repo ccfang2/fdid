@@ -41,7 +41,7 @@ As is seen, the reference time in this example is at event time -1. The gray are
 
 If you do not have estimates of event study coefficients and covariances, you may use our function `fdid()` to estimate them from using your original data. Our function allows the estimation under both non-staggered and staggered DiD designs. In particularly, we consider the negative weighting problem of estimating event study coefficients under staggered designs and use carefully chosen non-negative weights to sum up estimates from different treatment subgroups.
 
-## Example 2: Honest Causal Inference under Treatment Anticipation
+## Example 2: Honest Causal Inference under Treatment Anticipation with Reference Band
 
 Following Example 1, we now suppose that, right after event time -3, there is an anticipation of treatment.
 

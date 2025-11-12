@@ -1,0 +1,55 @@
+# _pkgdown.yml
+# pkgdown site configuration for fdid
+
+url: https://ccfang2.github.io/fdid
+template:
+  bootstrap: 5
+  bootswatch: flatly
+  bslib:
+    base_font: {google: "Inter"}
+    heading_font: {google: "Merriweather"}
+    code_font: {google: "Fira Code"}
+
+navbar:
+  structure:
+    left: [home, reference, articles, news]
+    right: [github]
+  components:
+    home:
+      text: "Home"
+      href: index.html
+    reference:
+      text: "Functions"
+      href: reference/index.html
+    articles:
+      text: "Articles"
+      href: articles/index.html
+    news:
+      text: "News"
+      href: news/index.html
+    github:
+      icon: fa-github
+      href: https://github.com/ccfang2/fdid
+
+home:
+  title: "fdid"
+  description: >
+    Functional Difference-in-Differences tools for honest inference
+    with event study plots.
+
+authors:
+  Chencheng Fang:
+    href: https://github.com/ccfang2
+
+footer:
+  structure:
+    left: [authors]
+    right: [pkgdown]
+  components:
+    authors:
+      text: "© 2025 Chencheng Fang · University of Bonn"
+    pkgdown:
+      text: "Built with pkgdown and bslib"
+
+# Optional: specify output directory
+destination: docs

@@ -2,7 +2,7 @@ pandoc: 3.1.1
 pkgdown: 2.1.1
 pkgdown_sha: ~
 articles: {}
-last_built: 2025-11-12T15:02Z
+last_built: 2025-12-15T10:18Z
 urls:
   reference: https://ccfang2.github.io/fdid/reference
   article: https://ccfang2.github.io/fdid/articles

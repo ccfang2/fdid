@@ -1,6 +1,5 @@
 #' Natural Spline Interpolation on Covariance
 #' @description The \code{cov_spline} function is used to perform natural spline interpolation on the covariance matrix.
-#' See Fang and Liebl (2025) for detailed information.
 #'
 #' @param cov a numeric square matrix of raw covariance. It must not contain missing values.
 #' @param grid a numeric vector of grid, at which the raw covariance is calculated.
@@ -11,7 +10,7 @@
 #' @import splines2
 #' @export
 #'
-#' @references Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference.
+#' @references Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. \href{https://arxiv.org/abs/2512.06804}{arXiv:2512.06804}.
 #'
 #' @examples
 #' cov_mat <- cov(matrix(rnorm(250),nrow=50))
@@ -22,6 +21,7 @@ cov_spline <- function(cov, grid, n_intrpl) {
   options(warn=-1)
 
   #check conditions
+  if (any(is.na(cov))) stop("The input 'cov' should not contain NA.")
   if(!is.numeric(cov)) stop("The input 'cov' needs to be numeric.")
   if(ncol(cov)!=nrow(cov)) stop("The input 'cov' needs to be a square matrix.")
   if(!is.numeric(grid)) stop("The input 'grid' needs to be numeric.")
@@ -43,12 +43,12 @@ cov_spline <- function(cov, grid, n_intrpl) {
   Phi <- kronecker(B, B)  # (p^2 x p^2) matrix
 
   # Step 2: Solve for spline coefficients
-  if (any(is.na(cov))) {
-    valid_idx <- which(!is.na(grid_expand$cov))
-    coef_spline <- qr.solve(Phi[valid_idx, ], grid_expand$cov[valid_idx])
-  } else {
+  # if (any(is.na(cov))) {
+  #   valid_idx <- which(!is.na(grid_expand$cov))
+  #   coef_spline <- qr.solve(Phi[valid_idx, ], grid_expand$cov[valid_idx])
+  # } else {
     coef_spline <- solve(Phi, grid_expand$cov)
-  }
+  #}
 
   # Step 3: Interpolation on fine grid
   grid_fine <- seq(a, b, length.out = n_intrpl)

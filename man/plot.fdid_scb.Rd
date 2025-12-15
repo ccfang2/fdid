@@ -2,21 +2,21 @@
 % Please edit documentation in R/plot.fdid_scb.R
 \name{plot.fdid_scb}
 \alias{plot.fdid_scb}
-\title{Custom Plot Method for objects of class \code{"fdid_scb"}}
+\title{Custom Plot Method for Objects of Class \code{"fdid_scb"}}
 \usage{
 \method{plot}{fdid_scb}(
   object,
   ta.ts = NULL,
   ta.s = NULL,
-  frm.mbar = NULL,
-  ftr.m = NULL,
-  frmtr.mbar = NULL,
+  frmtr.m = NULL,
   ref.band.pre = TRUE,
   note.pre = TRUE,
   note.post = TRUE,
-  ci = TRUE,
+  ci.pre = FALSE,
+  ci.post = FALSE,
   pos.legend = "top",
   scale.legend = 1,
+  verbose = TRUE,
   ...
 )
 }
@@ -25,34 +25,33 @@
 
 \item{ta.ts}{a numeric value that indicates the time point based on which the sample estimates for treatment anticipation biases are computed. It should be less or equal to the time point after which units start responding to a future treatment. It is supposed to be greater than the minimal event time and no greater than t0 in \code{object}. If it is NULL, there is no anticipation.}
 
-\item{ta.s}{a numeric value of control parameter for honest inference under treatment anticipation. If NULL, the critical value \eqn{t_{1-\alpha/2, df}} or \eqn{z_{1-\alpha/2}} is applied with the same \eqn{\alpha} used for constructing the pointwise confidence intervals. If no treatment anticipation is defined in \code{ta.ts}, the value of \code{ta.s} is ignored.}
+\item{ta.s}{a numeric vector of control parameters with length two for deriving the honest reference band under the violation of no-anticipation assumption. If NULL, the critical value \eqn{t_{1-\alpha/2, df}} or \eqn{z_{1-\alpha/2}} is applied with the same \eqn{\alpha} used for constructing the point-wise confidence intervals. If no treatment anticipation is defined in \code{ta.ts}, the value of \code{ta.s} is ignored.}
 
-\item{frm.mbar}{a numeric value of control parameter for honest inference under functional relative magnitudes.}
+\item{frmtr.m}{a numeric vector of control parameters with length two for deriving the honest reference band under violation of the parallel trends assumption. The default is NULL.}
 
-\item{ftr.m}{a numeric value of control parameter for honest inference under functional trend restrictions.}
+\item{ref.band.pre}{a logical value. If TRUE, the reference band for pre-anticipation period is also plotted.}
 
-\item{frmtr.mbar}{a numeric value of control parameter for combining functional relative magnitudes and functional trend restrictions.}
+\item{note.pre}{a logical value. If TRUE, the note for pre-anticipation period is given on top of plot. If no honest reference band is defined, there is no need to perform validation in the pre-anticipation period, and \code{note.pre} is FALSE.}
 
-\item{ref.band.pre}{a logical value. If TRUE, the reference band for pre-treatment periods is also plotted.}
+\item{note.post}{a logical value. If TRUE, the note for post-treatment period is given on top of plot.}
 
-\item{note.pre}{a logical value. If TRUE, the note for pre-treatment periods is given on top of plot.}
+\item{ci.pre}{a logical value. If TRUE, the point-wise confidence intervals for pre-anticipation period are plotted.}
 
-\item{note.post}{a logical value. If TRUE, the note for post-treatment periods is given on top of plot.}
-
-\item{ci}{a logical value. If TRUE, the point-wise confidence intervals are also plotted.}
+\item{ci.post}{a logical value. If TRUE, the point-wise confidence intervals for post-treatment period are plotted.}
 
 \item{pos.legend}{a character value of "top" or "bottom" that indicates the position of legend. If NULL, the legend is not printed.}
 
 \item{scale.legend}{a positive number that defines the size of legend. If \code{pos.legend} is NULL, the value of \code{scale.legend} is ignored.}
 
+\item{verbose}{a logical value. If TRUE, the uniformly significant time span(s) under your specification will be directly printed out on the console.}
+
 \item{...}{Additional arguments to be passed to \link[base]{plot}.}
 }
 \value{
-The function returns a plot with simultaneous confidence band for event study coefficients in a functional framework, together with bounds for honest inference, if properly defined.
+The function returns a plot with simultaneous confidence bands for event study coefficients in a functional framework, together with the honest reference band for honest inference, if properly defined.
 }
 \description{
-This function is an S3 method for \link[base]{plot}, specifically designed for objects of class \code{"fdid_scb"}.
-It plots simultaneous confidence band with bounds for honest inference.
+This function is an S3 method for \link[base]{plot}, specifically designed for objects of class \code{"fdid_scb"}. It plots the simultaneous confidence bands with honest reference band for honest inference.
 }
 \examples{
 data(LWdata)
@@ -62,17 +61,16 @@ cat("The reference time is ", LWdata$t0, ". If not NULL, the input 'ta.ts' in fu
 ## simultaneous inference
 par(cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4)
 plot(fdid_scb_est, scale.legend=1.4)
-## adding a label for Y-axis
 title(ylab="Effects of Duty-to-Bargain Laws")
 
 ## honest inference under treatment anticipation
 plot(fdid_scb_est, ta.ts=-3, scale.legend=1.4)
 
-## honest inference under violation of parallel trends
-plot(fdid_scb_est, frm.mbar=0.4, scale.legend=1.4)
+## honest inference under violation of parallel trends assumption
+plot(fdid_scb_est, frmtr.m=c(0.2,0.2), scale.legend=1.4)
 }
 \references{
-Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference.
+Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. \href{https://arxiv.org/abs/2512.06804}{arXiv:2512.06804}.
 }
 \seealso{
 \link{fdid_scb}

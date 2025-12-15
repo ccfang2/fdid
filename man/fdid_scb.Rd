@@ -2,7 +2,7 @@
 % Please edit documentation in R/fdid_scb.R
 \name{fdid_scb}
 \alias{fdid_scb}
-\title{Compute simultaneous confidence band for event study coefficients in functional DiD framework}
+\title{Compute Simultaneous Confidence Bands for Event Study Coefficients in Functional DiD Framework}
 \usage{
 fdid_scb(
   object = NULL,
@@ -26,27 +26,27 @@ corresponding event time. The estimate of coefficient at reference time should b
 
 \item{t0}{a numeric scalar that indicates the reference time.}
 
-\item{df}{degree of freedom for the t-distributed based bands. If NULL, Gaussian distributed bands are computed.}
+\item{df}{degree of freedom for the t-distributed based band in post-treatment periods. If NULL, Gaussian distributed bands are computed.}
 
-\item{ci.alpha}{significance level for the pointwise confidence intervals.}
+\item{ci.alpha}{significance level for the point-wise confidence intervals.}
 
-\item{scb.pre.alpha}{significance level for simultaneous confidence band in pre-treatment periods.}
+\item{scb.pre.alpha}{significance level for the infimum-based simultaneous confidence band in pre-treatment periods.}
 
-\item{scb.post.alpha}{significance level for simultaneous confidence band in post-treatment periods.}
+\item{scb.post.alpha}{significance level for the supremum-based simultaneous confidence band in post-treatment periods.}
 }
 \value{
 The \code{fdid_scb} function returns a list containing three objects:
 \describe{
-\item{scb}{a list that includes the functional estimate of event study coefficients and the simultaneous confidence band.}
+\item{scb}{a list that includes the functional estimate of event study coefficients and the simultaneous confidence bands.}
 \item{ci}{a matrix that includes the point-wise estimates of event study coefficients and their confidence intervals.}
 \item{data}{a list that stores the original inputs of beta and cov.}
 }
 The output is an object of S3 class \code{"fdid_scb"}.
 }
 \description{
-The \code{fdid_scb} function is used to compute simultaneous confidence band for event study coefficients in a functional
-framework, together with the point-wise confidence intervals at observable event time. We adopt the algorithm of the so-called fast and
-fair simultaneous confidence bands. See Liebl and Reimherr (2023) for details.
+The \code{fdid_scb} function is used to compute simultaneous confidence bands for event study coefficients in a functional
+framework. Specifically, we compute an infimum-based simultaneous confidence band in pre-treatment period by parametric bootstrap, and a supremum-based
+simultaneous confidence band in post-treatment period by the algorithm of Kac-Rice formula proposed in \href{https://academic.oup.com/jrsssb/article/85/3/842/7133768}{Liebl and Reimherr (2023)}.
 }
 \examples{
 data(LWdata)
@@ -57,7 +57,7 @@ fdid_est2 <- fdid(data=simulated_stagger_data, treatment=simulated_stagger_treat
 fdid_scb_est2 <- fdid_scb(object=fdid_est2)
 }
 \references{
-Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference.
+Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. \href{https://arxiv.org/abs/2512.06804}{arXiv:2512.06804}.
 
 Liebl, D. and M. Reimherr (2023). Fast and fair simultaneous confidence bands for functional parameters. Journal of
 the Royal Statistical Society Series B: Statistical Methodology 85(3), 842–868

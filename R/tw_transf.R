@@ -1,4 +1,4 @@
-#' Univariate two-way transformation
+#' Univariate Two-Way Transformation
 #' @description The \code{tw_transf} function is used to apply two-way transformation on a single variable.
 #'
 #' @param x a numeric vector the two-way transformation is supposed to be performed on.

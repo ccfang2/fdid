@@ -63,7 +63,9 @@ plot.fdid_scb <- function(object,
   if (!is.null(ta.ts) && (!is.numeric(ta.ts) || length(ta.ts) != 1)) stop("The input 'ta.ts' should be either NULL or a numeric scalar.")
   if (!is.null(ta.ts) && !(ta.ts %in% object$scb$event_t[which(object$scb$event_t<=object$data$t0)])) stop("If not NULL, the input 'ta.ts' should be among the pre-treatment event time in 'object'.")
   if (!is.null(ta.ts) && ta.ts == object$scb$event_t[1] && !all(sapply(list( frmtr.m), is.null))) stop("If 'ta.ts' is defined to be the first event time, 'frmtr.m' must be NULL, because there is no available data for computing pre-trend differences.")
+  if (!is.null(ta.s) && any(is.na(ta.s))) stop("The input 'ta.s' cannot contain NA.")
   if (!is.null(ta.s) && (!is.numeric(ta.s) || length(ta.s) != 2 || any(ta.s <0) )) stop("The input 'ta.s' should be either NULL or a numeric non-negative vector of length two.")
+  if (!is.null(frmtr.m) && any(is.na(frmtr.m))) stop("The input 'frmtr.m' cannot contain NA.")
   if (!is.null(frmtr.m) && (!is.numeric(frmtr.m) || length(frmtr.m) != 2 || any(frmtr.m<0) )) stop("The input 'frmtr.m' should be either NULL or a numeric non-negative vector of length two.")
   if (!is.logical(ref.band.pre)) stop("The input 'ref.band.pre' should be logical.")
   if (!is.logical(note.pre)) stop("The input 'note.pre' should be logical.")
@@ -368,9 +370,13 @@ plot.fdid_scb <- function(object,
       } else {
         ta.s1 <- ta.s[1]
         ta.s2 <- ta.s[2]
+        # ta_ub <- if(is.na(ta.s1)) ci_upper[names(ci_upper)==as.character(ta.ts)] else betahat[which(timeVec==ta.ts)]+ta.s1*sqrt(diag(covhat)[which(timeVec==ta.ts)])
+        # ta_lb <- if(is.na(ta.s2)) ci_lower[names(ci_lower)==as.character(ta.ts)] else betahat[which(timeVec==ta.ts)]-ta.s2*sqrt(diag(covhat)[which(timeVec==ta.ts)])
+
         ta_ub <- betahat[which(timeVec==ta.ts)]+ta.s1*sqrt(diag(covhat)[which(timeVec==ta.ts)])
         ta_lb <- betahat[which(timeVec==ta.ts)]-ta.s2*sqrt(diag(covhat)[which(timeVec==ta.ts)])
       }
+
       honest_ub_splinefun <- function(x) ta_ub
       honest_lb_splinefun <- function(x) ta_lb
       honest_ub_splinefun <- Vectorize(honest_ub_splinefun)
@@ -385,6 +391,9 @@ plot.fdid_scb <- function(object,
       } else {
         ta.s1 <- ta.s[1]
         ta.s2 <- ta.s[2]
+        # ta_ub <- if(is.na(ta.s1)) ci_upper[names(ci_upper)==as.character(ta.ts)] else betahat[which(timeVec==ta.ts)]+ta.s1*sqrt(diag(covhat)[which(timeVec==ta.ts)])
+        # ta_lb <- if(is.na(ta.s2)) ci_lower[names(ci_lower)==as.character(ta.ts)] else betahat[which(timeVec==ta.ts)]-ta.s2*sqrt(diag(covhat)[which(timeVec==ta.ts)])
+
         ta_ub <- betahat[which(timeVec==ta.ts)]+ta.s1*sqrt(diag(covhat)[which(timeVec==ta.ts)])
         ta_lb <- betahat[which(timeVec==ta.ts)]-ta.s2*sqrt(diag(covhat)[which(timeVec==ta.ts)])
       }

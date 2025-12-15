@@ -1,4 +1,4 @@
-#' Natural Spline Interpolation on Covariance
+#' Natural spline interpolation on covariance
 #' @description The \code{cov_spline} function is used to perform natural spline interpolation on the covariance matrix.
 #'
 #' @param cov a numeric square matrix of raw covariance. It must not contain missing values.

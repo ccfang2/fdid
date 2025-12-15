@@ -2,7 +2,7 @@
 % Please edit documentation in R/tw_transf.R
 \name{tw_transf}
 \alias{tw_transf}
-\title{Univariate Two-Way Transformation}
+\title{Univariate two-way transformation}
 \usage{
 tw_transf(x, t, i)
 }

@@ -1,7 +1,7 @@
-#' Compute Simultaneous Confidence Bands for Event Study Coefficients in Functional DiD Framework
+#' Compute simultaneous confidence bands for event study coefficients in functional DiD framework
 #' @description The \code{fdid_scb} function is used to compute simultaneous confidence bands for event study coefficients in a functional
 #' framework. Specifically, we compute an infimum-based simultaneous confidence band in pre-treatment period by parametric bootstrap, and a supremum-based
-#' simultaneous confidence band in post-treatment period by the algorithm of Kac-Rice formula proposed in \href{https://academic.oup.com/jrsssb/article/85/3/842/7133768}{Liebl and Reimherr (2023)}.
+#' simultaneous confidence band in post-treatment period by an algorithm of Kac-Rice formula proposed in \href{https://academic.oup.com/jrsssb/article/85/3/842/7133768}{Liebl and Reimherr (2023)}.
 #'
 #' @param object an object of S3 class \code{"fdid"}, which is an output of the function \link{fdid}. If it is provided, arguments 'beta',
 #' 'cov' and 't0' are ignored.
@@ -120,7 +120,7 @@ fdid_scb <- function(object=NULL,
   #   covhat_spline <- apply(covhat_spline, 1, function(row) spline(x=timeVec, y=row, n=len_spline, method="natural")$y)
   # }
 
-  # compute tau function for pre-treatment periods
+  # compute infimum-based simultaneous confidence band for pre-treatment periods via parametric bootstrapping
   timeVec_pre     <- timeVec[which(timeVec<=t0)]
   betahat_pre     <- betahat[which(timeVec<=t0)]
   covhat_pre      <- covhat[which(timeVec<=t0), which(timeVec<=t0)]
@@ -132,7 +132,6 @@ fdid_scb <- function(object=NULL,
   covhat_spline_pre      <- cov_spline(cov=covhat_pre, grid=timeVec_pre, n_intrpl=len_spline_pre)
   diag_covhat_spline_pre <- diag(covhat_spline_pre)
 
-  # compute infimum-based simultaneous confidence band for pre-treatment periods via parametric bootstrapping
   B <- 500
   T_boot <- numeric(B)
 

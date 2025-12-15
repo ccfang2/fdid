@@ -1,5 +1,5 @@
-#' Custom Plot Method for Objects of Class \code{"fdid_scb"}
-#' @description This function is an S3 method for \link[base]{plot}, specifically designed for objects of class \code{"fdid_scb"}. It plots the simultaneous confidence bands with honest reference band for honest inference.
+#' Custom plot method for objects of class \code{"fdid_scb"}
+#' @description This function is an S3 method for \link[base]{plot}, specifically designed for objects of class \code{"fdid_scb"}. It plots the simultaneous confidence bands together with honest reference band for performing honest causal inference.
 #'
 #' @param object an object of class \code{"fdid_scb"}. The object to be plotted.
 #' @param ta.ts a numeric value that indicates the time point based on which the sample estimates for treatment anticipation biases are computed. It should be less or equal to the time point after which units start responding to a future treatment. It is supposed to be greater than the minimal event time and no greater than t0 in \code{object}. If it is NULL, there is no anticipation.
@@ -8,7 +8,7 @@
 #' @param ref.band.pre a logical value. If TRUE, the reference band for pre-anticipation period is also plotted.
 #' @param note.pre a logical value. If TRUE, the note for pre-anticipation period is given on top of plot. If no honest reference band is defined, there is no need to perform validation in the pre-anticipation period, and \code{note.pre} is FALSE.
 #' @param note.post a logical value. If TRUE, the note for post-treatment period is given on top of plot.
-#' @param ci.pre a logical value. If TRUE, the point-wise confidence intervals for pre-anticipation period are plotted.
+#' @param ci.pre a logical value. If TRUE, the point-wise confidence intervals for pre-treatment period are plotted.
 #' @param ci.post a logical value. If TRUE, the point-wise confidence intervals for post-treatment period are plotted.
 #' @param pos.legend a character value of "top" or "bottom" that indicates the position of legend. If NULL, the legend is not printed.
 #' @param scale.legend a positive number that defines the size of legend. If \code{pos.legend} is NULL, the value of \code{scale.legend} is ignored.

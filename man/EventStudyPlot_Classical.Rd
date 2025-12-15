@@ -2,7 +2,7 @@
 % Please edit documentation in R/EventStudyPlot_Classical.R
 \name{EventStudyPlot_Classical}
 \alias{EventStudyPlot_Classical}
-\title{Drawing Classical Event Study Plot Using the Objects of Class \code{"fdid_scb"}}
+\title{Drawing classical event study plot}
 \usage{
 EventStudyPlot_Classical(object, pos.legend = "top", scale.legend = 1, ...)
 }

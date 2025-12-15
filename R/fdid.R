@@ -1,4 +1,4 @@
-#' Estimate the Event Study Coefficients and the Covariance Matrix
+#' Estimate the event study coefficients and the covariance matrix
 #' @description The \code{fdid} function is used to estimate the event study coefficients and the covariance matrix in non-staggered or staggered adoption design.
 #' In staggered design, our estimation does not suffer from the so-called negative weighting problem, since we use carefully-chosen non-negative weights to consolidate
 #' estimates from each subgroup. See \href{https://arxiv.org/abs/2512.06804}{Fang and Liebl (2025)} for detailed estimation method.

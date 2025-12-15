@@ -2,7 +2,7 @@
 % Please edit documentation in R/fdid.R
 \name{fdid}
 \alias{fdid}
-\title{Estimate the Event Study Coefficients and the Covariance Matrix}
+\title{Estimate the event study coefficients and the covariance matrix}
 \usage{
 fdid(data, treatment)
 }

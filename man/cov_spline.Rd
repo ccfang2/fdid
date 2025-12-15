@@ -2,7 +2,7 @@
 % Please edit documentation in R/cov_spline.R
 \name{cov_spline}
 \alias{cov_spline}
-\title{Natural Spline Interpolation on Covariance}
+\title{Natural spline interpolation on covariance}
 \usage{
 cov_spline(cov, grid, n_intrpl)
 }

@@ -1,4 +1,4 @@
-#' Drawing Classical Event Study Plot Using the Objects of Class \code{"fdid_scb"}
+#' Drawing classical event study plot
 #' @description This function is to draw the classical event study plot with point-wise confidence intervals for event study coefficients.
 #'
 #' @param object an object of class \code{"fdid_scb"}. The object to be plotted.

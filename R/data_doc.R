@@ -1,4 +1,4 @@
-#' A simulated example of staggered DiD design
+#' Simulated example of staggered DiD design
 #' @docType data
 #' @name simulated_stagger_example
 #'
@@ -19,7 +19,7 @@ NULL
 
 
 
-#' A simulated example of non-staggered DiD design
+#' Simulated example of non-staggered DiD design
 #' @docType data
 #' @name simulated_nonstagger_example
 #'

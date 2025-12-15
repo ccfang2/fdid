@@ -2,7 +2,7 @@
 % Please edit documentation in R/plot.fdid_scb.R
 \name{plot.fdid_scb}
 \alias{plot.fdid_scb}
-\title{Custom Plot Method for Objects of Class \code{"fdid_scb"}}
+\title{Custom plot method for objects of class \code{"fdid_scb"}}
 \usage{
 \method{plot}{fdid_scb}(
   object,
@@ -35,7 +35,7 @@
 
 \item{note.post}{a logical value. If TRUE, the note for post-treatment period is given on top of plot.}
 
-\item{ci.pre}{a logical value. If TRUE, the point-wise confidence intervals for pre-anticipation period are plotted.}
+\item{ci.pre}{a logical value. If TRUE, the point-wise confidence intervals for pre-treatment period are plotted.}
 
 \item{ci.post}{a logical value. If TRUE, the point-wise confidence intervals for post-treatment period are plotted.}
 
@@ -51,7 +51,7 @@
 The function returns a plot with simultaneous confidence bands for event study coefficients in a functional framework, together with the honest reference band for honest inference, if properly defined.
 }
 \description{
-This function is an S3 method for \link[base]{plot}, specifically designed for objects of class \code{"fdid_scb"}. It plots the simultaneous confidence bands with honest reference band for honest inference.
+This function is an S3 method for \link[base]{plot}, specifically designed for objects of class \code{"fdid_scb"}. It plots the simultaneous confidence bands together with honest reference band for performing honest causal inference.
 }
 \examples{
 data(LWdata)

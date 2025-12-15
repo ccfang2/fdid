@@ -3,7 +3,7 @@
 \docType{data}
 \name{simulated_stagger_example}
 \alias{simulated_stagger_example}
-\title{A simulated example of staggered DiD design}
+\title{Simulated example of staggered DiD design}
 \format{
 It contains two data frames. The first data frame 'simulated_stagger_data' has 4200 rows and 5 columns:
 \describe{
@@ -19,5 +19,5 @@ The second data frame 'simulated_stagger_treatment' has 200 rows and 2 columns:
 }
 }
 \description{
-A simulated example of staggered DiD design
+Simulated example of staggered DiD design
 }

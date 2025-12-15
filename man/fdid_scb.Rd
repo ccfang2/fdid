@@ -2,7 +2,7 @@
 % Please edit documentation in R/fdid_scb.R
 \name{fdid_scb}
 \alias{fdid_scb}
-\title{Compute Simultaneous Confidence Bands for Event Study Coefficients in Functional DiD Framework}
+\title{Compute simultaneous confidence bands for event study coefficients in functional DiD framework}
 \usage{
 fdid_scb(
   object = NULL,
@@ -46,7 +46,7 @@ The output is an object of S3 class \code{"fdid_scb"}.
 \description{
 The \code{fdid_scb} function is used to compute simultaneous confidence bands for event study coefficients in a functional
 framework. Specifically, we compute an infimum-based simultaneous confidence band in pre-treatment period by parametric bootstrap, and a supremum-based
-simultaneous confidence band in post-treatment period by the algorithm of Kac-Rice formula proposed in \href{https://academic.oup.com/jrsssb/article/85/3/842/7133768}{Liebl and Reimherr (2023)}.
+simultaneous confidence band in post-treatment period by an algorithm of Kac-Rice formula proposed in \href{https://academic.oup.com/jrsssb/article/85/3/842/7133768}{Liebl and Reimherr (2023)}.
 }
 \examples{
 data(LWdata)

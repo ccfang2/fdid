@@ -2,7 +2,7 @@
 % Please edit documentation in R/EventStudyPlot_Classical.R
 \name{EventStudyPlot_Classical}
 \alias{EventStudyPlot_Classical}
-\title{Drawing classical event study plot}
+\title{Classical event study plot}
 \usage{
 EventStudyPlot_Classical(object, pos.legend = "top", scale.legend = 1, ...)
 }
@@ -19,7 +19,7 @@ EventStudyPlot_Classical(object, pos.legend = "top", scale.legend = 1, ...)
 The \code{EventStudyPlot_Classical} function returns a classical event study plot with point-wise confidence intervals for event study coefficients.
 }
 \description{
-This function is to draw the classical event study plot with point-wise confidence intervals for event study coefficients.
+This \code{EventStudyPlot_Classical} function is to draw the classical event study plot with point-wise confidence intervals for event study coefficients.
 }
 \examples{
 data(LWdata)

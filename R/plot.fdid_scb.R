@@ -163,18 +163,19 @@ plot.fdid_scb <- function(object,
 
     if(!isTRUE(ref.band.pre)) {
       segments(x0=t0, y0=0, x1=end, y1=0, lty=3, lwd=4, col="red")
-      roots_vec_temp    <- sort(unique(c(roots_vec, timeVec[which(timeVec==t0)-1], timeVec[which(timeVec==t0)+1])))
+      roots_vec_temp    <- sort(unique(c(roots_vec, timeVec[which(timeVec==t0)])))
+      # roots_vec_temp    <- sort(unique(c(roots_vec, timeVec[which(timeVec==t0)-1], timeVec[which(timeVec==t0)+1])))
       intervals         <- data.frame(left  = head(roots_vec_temp, -1), right = tail(roots_vec_temp, -1))
       stat_sig_vec_temp <- rep(NA, nrow(intervals))
 
       for (i in 1:nrow(intervals)) {
         l <- intervals$left[i]
         r <- intervals$right[i]
-        if (l >= timeVec[which(timeVec==t0)-1] && r <= timeVec[which(timeVec==t0)+1]) {stat_sig_vec_temp[i] <- 0
-        } else {
+        # if (l >= timeVec[which(timeVec==t0)-1] && r <= timeVec[which(timeVec==t0)+1]) {stat_sig_vec_temp[i] <- 0
+        # } else {
           idx <- which(roots_vec <= l)[length(which(roots_vec  <= l))]
           stat_sig_vec_temp[i] <- stat_sig_vec[idx]
-        }
+        # }
       }
 
       stat_sig_vec <- stat_sig_vec_temp
@@ -195,19 +196,20 @@ plot.fdid_scb <- function(object,
       }
     } else {
       segments(x0=start, y0=0, x1=end, y1=0, lty=3, lwd=4, col="red")
-      roots_vec_temp    <- sort(unique(c(roots_vec, timeVec[which(timeVec==t0)-1], timeVec[which(timeVec==t0)+1])))
+      roots_vec_temp    <- sort(unique(c(roots_vec, timeVec[which(timeVec==t0)])))
+      # roots_vec_temp    <- sort(unique(c(roots_vec, timeVec[which(timeVec==t0)-1], timeVec[which(timeVec==t0)+1])))
       intervals         <- data.frame(left  = head(roots_vec_temp, -1), right = tail(roots_vec_temp, -1))
       stat_sig_vec_temp <- rep(NA, nrow(intervals))
 
       for (i in 1:nrow(intervals)) {
         l <- intervals$left[i]
         r <- intervals$right[i]
-        if (l >= timeVec[which(timeVec==t0)-1] && r <= timeVec[which(timeVec==t0)+1]) {
-          stat_sig_vec_temp[i] <- 0
-        } else {
+        # if (l >= timeVec[which(timeVec==t0)-1] && r <= timeVec[which(timeVec==t0)+1]) {
+        #   stat_sig_vec_temp[i] <- 0
+        # } else {
           idx <- which(roots_vec <= l)[length(which(roots_vec  <= l))]
           stat_sig_vec_temp[i] <- stat_sig_vec[idx]
-        }
+        # }
       }
 
       stat_sig_vec <- stat_sig_vec_temp
@@ -491,7 +493,8 @@ plot.fdid_scb <- function(object,
     fun_stat_sig_UB_vec <- Vectorize(fun_stat_sig_UB_vec)
     fun_stat_sig_LB_vec <- Vectorize(fun_stat_sig_LB_vec)
 
-    fun_stat_sig_vec <- function(x) {if(fun_stat_sig_UB_vec(x) != fun_stat_sig_LB_vec(x) || (x >= timeVec[which(timeVec==t0)-1] && x <= timeVec[which(timeVec==t0)+1])) 0 else fun_stat_sig_UB_vec(x)}
+    # fun_stat_sig_vec <- function(x) {if(fun_stat_sig_UB_vec(x) != fun_stat_sig_LB_vec(x) || (x >= timeVec[which(timeVec==t0)-1] && x <= timeVec[which(timeVec==t0)+1])) 0 else fun_stat_sig_UB_vec(x)}
+    fun_stat_sig_vec <- function(x) {if(fun_stat_sig_UB_vec(x) != fun_stat_sig_LB_vec(x)) 0 else fun_stat_sig_UB_vec(x)}
     fun_stat_sig_vec <- Vectorize(fun_stat_sig_vec)
 
     # draw plots
@@ -531,7 +534,8 @@ plot.fdid_scb <- function(object,
     if(!isTRUE(ref.band.pre)) {
       segments(x0=t0, y0=0, x1=end, y1=0, lty=3, lwd=4, col="red")
       ShadeBetween(timeVec[timeVec>=t0], timeVec[timeVec>=t0], honest_ub_splinefun(timeVec[timeVec>=t0]), honest_lb_splinefun(timeVec[timeVec>=t0]), col=rgb(1,0,0,alpha=0.4), border=NA)
-      roots_vec <- sort(unique(c(roots_vec, timeVec[which(timeVec==t0)-1], timeVec[which(timeVec==t0)+1])))
+      roots_vec <- sort(unique(c(roots_vec, timeVec[which(timeVec==t0)])))
+      # roots_vec <- sort(unique(c(roots_vec, timeVec[which(timeVec==t0)-1], timeVec[which(timeVec==t0)+1])))
 
       for (i in 1:(length(roots_vec)-1) ) {
         if ( fun_stat_sig_vec((roots_vec[i]+roots_vec[i+1])/2)==1 & roots_vec[i]>=t0 ) {
@@ -550,8 +554,10 @@ plot.fdid_scb <- function(object,
       segments(x0=start, y0=0, x1=end, y1=0, lty=3, lwd=4, col="red")
       ShadeBetween(timeVec[timeVec>=t0], timeVec[timeVec>=t0], honest_ub_splinefun(timeVec[timeVec>=t0]), honest_lb_splinefun(timeVec[timeVec>=t0]), col=rgb(1,0,0,alpha=0.4), border=NA)
       ShadeBetween(timeVec[timeVec<=ta.ts], timeVec[timeVec<=ta.ts], honest_ub_splinefun(timeVec[timeVec<=ta.ts]), honest_lb_splinefun(timeVec[timeVec<=ta.ts]), col=rgb(1,0,0,alpha=0.2), border=NA)
-      roots_vec <- sort(unique(c(roots_vec, timeVec[which(timeVec==t0)-1], timeVec[which(timeVec==t0)+1])))
-      roots_vec <- roots_vec[roots_vec >= timeVec[which(timeVec==t0)+1] ]
+      roots_vec <- sort(unique(c(roots_vec, timeVec[which(timeVec==t0)])))
+      # roots_vec <- sort(unique(c(roots_vec, timeVec[which(timeVec==t0)-1], timeVec[which(timeVec==t0)+1])))
+      roots_vec <- roots_vec[roots_vec >= timeVec[which(timeVec==t0)] ]
+      # roots_vec <- roots_vec[roots_vec >= timeVec[which(timeVec==t0)+1] ]
 
       for (i in 1:(length(roots_vec)-1) ) {
         if ( fun_stat_sig_vec((roots_vec[i]+roots_vec[i+1])/2)==1 & roots_vec[i]>=t0 ) {

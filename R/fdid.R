@@ -1,7 +1,7 @@
 #' Estimate the event study coefficients and the covariance matrix
 #' @description The \code{fdid} function is used to estimate the event study coefficients and the covariance matrix in non-staggered or staggered adoption design.
 #' In staggered design, our estimation does not suffer from the so-called negative weighting problem, since we use carefully-chosen non-negative weights to consolidate
-#' estimates from each subgroup. See \href{https://arxiv.org/abs/2512.06804}{Fang and Liebl (2025)} for detailed estimation method.
+#' estimates from each subgroup. See \href{https://arxiv.org/abs/2512.06804}{Fang and Liebl (2026)} for detailed estimation method.
 #'
 #' @param data a data frame in which the first variable should be the outcome variable, and the latter two variables are time and unit indices. The outcome variable should be numeric.
 #' @param treatment a data frame in which the first variable is the unit index; the second variable indicates the reference time, after which the treatment is given, for each unit.
@@ -11,7 +11,7 @@
 #' reference period. The output is an object of S3 class \code{"fdid"}.
 #' @import dplyr
 #' @export
-#' @references Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. \href{https://arxiv.org/abs/2512.06804}{arXiv:2512.06804}.
+#' @references Fang, C. and Liebl, D. (2026). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. \href{https://arxiv.org/abs/2512.06804}{arXiv:2512.06804}.
 #'
 #' @seealso \link{tw_transf}, \link{fdid_scb}
 #'

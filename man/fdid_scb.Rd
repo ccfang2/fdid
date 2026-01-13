@@ -57,7 +57,7 @@ fdid_est2 <- fdid(data=simulated_stagger_data, treatment=simulated_stagger_treat
 fdid_scb_est2 <- fdid_scb(object=fdid_est2)
 }
 \references{
-Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. \href{https://arxiv.org/abs/2512.06804}{arXiv:2512.06804}.
+Fang, C. and Liebl, D. (2026). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. \href{https://arxiv.org/abs/2512.06804}{arXiv:2512.06804}.
 
 Liebl, D. and M. Reimherr (2023). Fast and fair simultaneous confidence bands for functional parameters. Journal of
 the Royal Statistical Society Series B: Statistical Methodology 85(3), 842–868

@@ -70,7 +70,7 @@ plot(fdid_scb_est, ta.ts=-3, scale.legend=1.4)
 plot(fdid_scb_est, frmtr.m=c(0.2,0.2), scale.legend=1.4)
 }
 \references{
-Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. \href{https://arxiv.org/abs/2512.06804}{arXiv:2512.06804}.
+Fang, C. and Liebl, D. (2026). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. \href{https://arxiv.org/abs/2512.06804}{arXiv:2512.06804}.
 }
 \seealso{
 \link{fdid_scb}

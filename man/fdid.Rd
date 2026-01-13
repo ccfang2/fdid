@@ -19,7 +19,7 @@ reference period. The output is an object of S3 class \code{"fdid"}.
 \description{
 The \code{fdid} function is used to estimate the event study coefficients and the covariance matrix in non-staggered or staggered adoption design.
 In staggered design, our estimation does not suffer from the so-called negative weighting problem, since we use carefully-chosen non-negative weights to consolidate
-estimates from each subgroup. See \href{https://arxiv.org/abs/2512.06804}{Fang and Liebl (2025)} for detailed estimation method.
+estimates from each subgroup. See \href{https://arxiv.org/abs/2512.06804}{Fang and Liebl (2026)} for detailed estimation method.
 }
 \examples{
 data(simulated_stagger_example)
@@ -28,7 +28,7 @@ plot(fdid_est$beta$coef[,2], fdid_est$beta$coef[,1], type="l",
      xlab="Event Time", ylab=expression(hat(beta)), family="Times")
 }
 \references{
-Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. \href{https://arxiv.org/abs/2512.06804}{arXiv:2512.06804}.
+Fang, C. and Liebl, D. (2026). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. \href{https://arxiv.org/abs/2512.06804}{arXiv:2512.06804}.
 }
 \seealso{
 \link{tw_transf}, \link{fdid_scb}

@@ -26,5 +26,5 @@ grid <- seq(0,1,len=5)
 cov_spline_mat <- cov_spline(cov=cov_mat, grid=grid, n_intrpl=50)
 }
 \references{
-Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. \href{https://arxiv.org/abs/2512.06804}{arXiv:2512.06804}.
+Fang, C. and Liebl, D. (2026). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. \href{https://arxiv.org/abs/2512.06804}{arXiv:2512.06804}.
 }

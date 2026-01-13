@@ -8,7 +8,7 @@
 ![GitHub Repo stars](https://img.shields.io/github/stars/ccfang2/fdid?style=social)
 
 
-The R package `fdid` allows users to implement the method proposed in Fang and Liebl (2025)[^1]. In this paper, we present a novel functional perspective on Difference-in-Differences (DiD) that allows for honest inference using event study plots under violations of parallel trends and/or no-anticipation assumptions. Specifically, in our proposed plot, we compute an infimum-based simultaneous confidence band in the pre-treatment period by parametric bootstrap, and a supremum-based simultaneous confidence band in the post-treatment period by the algorithm of Kac-Rice formula proposed in Liebl and Reimherr (2023)[^2]. Additionally, by contrast to classical reference line in traditional event study plots, we derive an honest reference band, accounting for potential biases from the violation of parallel trends or no-anticipation assumption, when making inference.
+The R package `fdid` allows users to implement the method proposed in Fang and Liebl (2026)[^1]. In this paper, we present a novel functional perspective on Difference-in-Differences (DiD) that allows for honest inference using event study plots under violations of parallel trends and/or no-anticipation assumptions. Specifically, in our proposed plot, we compute an infimum-based simultaneous confidence band in the pre-treatment period by parametric bootstrap, and a supremum-based simultaneous confidence band in the post-treatment period by the algorithm of Kac-Rice formula proposed in Liebl and Reimherr (2023)[^2]. Additionally, by contrast to classical reference line in traditional event study plots, we derive an honest reference band, accounting for potential biases from the violation of parallel trends or no-anticipation assumption, when making inference.
 
 By doing so, we turn traditional event study plots into rigorous honest causal inference tools through equivalence and relevance testing: Honest reference band can be validated using equivalence testing in the pre-anticipation period, and honest causal effects can be tested using relevance testing in the post-treatment period.
 
@@ -32,6 +32,7 @@ library(fdid)
 data(Gdata)
 Gdata$beta[,"event_t"] <- Gdata$beta[,"event_t"]- Gdata$t0 #Recenter the event time on 0
 fdid_scb_est <- fdid_scb(beta=Gdata$beta, cov=Gdata$cov, t0=0)
+par(cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4, family="Times")
 EventStudyPlot_Classical(fdid_scb_est, pos.legend="bottom", scale.legend=1.4)
 ```
 
@@ -54,10 +55,11 @@ the empirical DiD literature—thereby embedding the DiD methodology within a co
 
 ## Simultaneous Confidence Bands
 
-We can therefore transform the traditional event study plot into a rigorous honest inference tool with the infimum-based 90% simultaneous confidence band in pre-treatment period and supremum-based 95% simultaneous confidence band in post-treatment period. The infimum-based 90% simultaneous confidence band is for performing equivalence testing at significance level 5% (see Section 3.3 in Fang and Liebl (2025)[^1]), i.e. validating the honest reference band in the pre-anticipation period; and the supremum-based 95% simultaneous confidence band is for performing relevance testing at significance level 5% (see Section 3.1 in Fang and Liebl (2025)[^1]), i.e. uniformly and honestly testing causal inference in the post-treatment period. The following is the new plot using simultaneous confidence bands.
+We can therefore transform the traditional event study plot into a rigorous honest inference tool with the infimum-based 90% simultaneous confidence band in pre-treatment period and supremum-based 95% simultaneous confidence band in post-treatment period. The infimum-based 90% simultaneous confidence band is for performing equivalence testing at significance level 5% (see Section 3.3 in Fang and Liebl (2026)[^1]), i.e. validating the honest reference band in the pre-anticipation period; and the supremum-based 95% simultaneous confidence band is for performing relevance testing at significance level 5% (see Section 3.1 in Fang and Liebl (2026)[^1]), i.e. uniformly and honestly testing causal inference in the post-treatment period. The following is the new plot using simultaneous confidence bands.
 
 ``` r
-plot(fdid_scb_est, pos.legend="bottom", scale.legend=1.4, note.pre=FALSE)
+par(cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4, family="Times")
+plot(fdid_scb_est, pos.legend="bottom", scale.legend=1.4, note.pre=FALSE, ci.post=TRUE)
 ```
 
 <p align="center">
@@ -74,9 +76,10 @@ To conduct honest inference using the plot above, we need to derive the honest r
 
 ## Example 1: Honest Reference Band under Violation of No-anticipation Assumption
 
-We now suppose that, after event time -2, there is an anticipation of treatment. We use control parameters $S_{u}=1.55$ and $S_{\ell}=2.55$ to derive the reference band (see equation (36) in Fang and Liebl (2025)[^1] for details on the control parameters).
+We now suppose that, after event time -2, there is an anticipation of treatment. We use control parameters $S_{u}=1.55$ and $S_{\ell}=2.55$ to derive the reference band (see equation (36) in Fang and Liebl (2026)[^1] for details on the control parameters).
 
 ``` r
+par(cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4, family="Times")
 plot(fdid_scb_est, ta.ts=-2, ta.s=c(1.55,2.55), pos.legend="bottom", scale.legend=1.4, ci.post=TRUE, ref.band.pre = TRUE)
 ```
 
@@ -84,13 +87,14 @@ plot(fdid_scb_est, ta.ts=-2, ta.s=c(1.55,2.55), pos.legend="bottom", scale.legen
 <img src="man/figures/plot_scb_ta.png" width="80%">
 </p>
 
-With an anticipation after event time -2, one may see that the treatment effect is still uniformly significant over event time [0.5, 8.8]. With the given control parameters, the reference band can be validated at the significance level 5%, since the infimum-based 90% simultaneous confidence band strictly lies within the reference band in the pre-anticipation period (see Section 3.3 in Fang and Liebl (2025)[^1] for details). The result shows that the treatment effect in Gallagher(2014)[^3] is robust under the considered treatment anticipation.
+With an anticipation after event time -2, one may see that the treatment effect is still uniformly significant over event time [0.5, 8.8]. With the given control parameters, the reference band can be validated at the significance level 5%, since the infimum-based 90% simultaneous confidence band strictly lies within the reference band in the pre-anticipation period (see Section 3.3 in Fang and Liebl (2026)[^1] for details). The result shows that the treatment effect in Gallagher(2014)[^3] is robust under the considered treatment anticipation.
 
 ## Example 2: Honest Reference Band under Violation of Parallel Trends Assumption
 
-We now suppose that, there is differential trend. We use control parameters $M_{u}=0.3$ and $M_{\ell}=0.3$ to derive the reference band (see equation (37) in Fang and Liebl (2025)[^1] for details on the control parameters).
+We now suppose that, there is differential trend. We use control parameters $M_{u}=0.3$ and $M_{\ell}=0.3$ to derive the reference band (see equation (37) in Fang and Liebl (2026)[^1] for details on the control parameters).
 
 ``` r
+par(cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4, family="Times")
 plot(fdid_scb_est, frmtr.m=c(0.3,0.3), pos.legend="bottom", scale.legend=1.4, ci.post=TRUE, ref.band.pre = TRUE)
 ```
 
@@ -100,13 +104,13 @@ plot(fdid_scb_est, frmtr.m=c(0.3,0.3), pos.legend="bottom", scale.legend=1.4, ci
 
 In the plot above, although the reference band cannot be validated at the significance level 5% due to high data variability, it captures the visible upward pre-trend with a width comparable to that of the infimum-based band, providing substantive justification. Using this reference band, we find that the treatment effect is still uniformly significant over event time [0, 7.3]. The result shows that the treatment effect in Gallagher(2014)[^3] is robust under the considered violation of parallel trends assumption.
 
-> In some cases, validating a given reference band can be challenging, as doing so may require selecting a very wide reference band—thereby making subsequent testing in the post-treatment period overly conservative. Such non-rejection of the equivalence null hypothesis (see Section 3.3 in Fang and Liebl (2025)[^1] for details) often reflects limited sample size or high variability, and must be viewed as a lack of evidence against the null, not confirmation of it. Thus, a reference band failing to pass the validation can still be used for honest inference when its specification can be supported by domain-specific justification.
+> In some cases, validating a given reference band can be challenging, as doing so may require selecting a very wide reference band—thereby making subsequent testing in the post-treatment period overly conservative. Such non-rejection of the equivalence null hypothesis (see Section 3.3 in Fang and Liebl (2026)[^1] for details) often reflects limited sample size or high variability, and must be viewed as a lack of evidence against the null, not confirmation of it. Thus, a reference band failing to pass the validation can still be used for honest inference when its specification can be supported by domain-specific justification.
 
 ## Contact
 Chencheng Fang, Email: [ccfang[at]uni-bonn.de](mailto:ccfang@uni-bonn.de), Hausdorff Center for Mathematics; Institute of Finance and Statistics, University of Bonn
 
 
-[^1]: Fang, C. and Liebl, D. (2025). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. [arXiv:2512.06804](https://arxiv.org/abs/2512.06804).
+[^1]: Fang, C. and Liebl, D. (2026). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. [arXiv:2512.06804](https://arxiv.org/abs/2512.06804).
 [^2]: Liebl, D. and M. Reimherr (2023). Fast and fair simultaneous confidence bands for functional parameters. Journal of the Royal Statistical Society Series B: Statistical Methodology 85(3), 842–868.
 [^3]: Gallagher, J. (2014). Learning about an Infrequent Event: Evidence from Flood Insurance Take-Up in the United States. American Economic Journal: Applied Economics 6(3), 206–33.
 [^4]: Rambachan, A. and J. Roth (2023). A more credible approach to parallel trends. The Review

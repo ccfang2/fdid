@@ -47,11 +47,15 @@ EventStudyPlot_Classical(fdid_scb_est, pos.legend="bottom", scale.legend=1.4)
 However, classical event study plots---such as the one above---suffer from at least three important limitations. 
 
  1. First, they typically display pointwise confidence intervals that do not account for multiple testing across event times.
- 2. Second, they can create a misleading impression that significant effects persist over continuous intervals, even though the underlying theory addresses only the discrete time points. This impression is further amplified when applied studies connect pointwise event study estimates and confidence intervals with straight lines across event times.
+ 2. Second, and of practical importance, they give the impression that the parallel trends and no-anticipation assumptions can be validated in the pre-treatment period when showing insignificant pre-treatment estimates. However, failure to reject the null hypothesis in the classical testing neither supports the absence of differences in time trends nor the absence of anticipatory effects, because insignif- icant estimates may arise from limited power and, therefore, a non-negligible Type II error.
  3. Third, and most importantly from a practical standpoint, honest inference methods—such as those developed by Rambachan and Roth (2023)[^4]—cannot be integrated into standard event study plots, limiting their usefulness for credible causal inference.
 
-We address these limitations by introducing a functional-data perspective on DiD. The key idea is to model the underlying time-series processes in continuous time—an assumption already implicit in many event-study plots in
-the empirical DiD literature—thereby embedding the DiD methodology within a coherent functional-data framework.
+We address these limitations by introducing a functional-data perspective on DiD. The key idea is to model the underlying time-series processes in continuous time—an assumption already implicitly implied in many empirical DiD studies, which connect pointwise event study estimates and confidence intervals with straight lines across event times in event study plots. Our proposed functional DiD estimator is uniformly consistent and converges to a Gaussian process in the Banach space of continuous functions. To address the limitations of classical event study plots, 
+
+1. First, the Gaussian process result provides the foundation for constructing simultaneous confidence bands for the DiD parameter (i.e., the event-study coefficients) across the full continuum of event times. Compared to conventional pointwise inference, our approach offers a powerful and more credible alternative, explicitly accounting for the multiple-testing problem inherent in event-study analyses.
+2. using infimum-based simultaneous confidence bands, we can validate honest reference bands in the pre-anticipation period via equivalence testing, thereby assessing the plausibility of the parallel trends and no-anticipation assumptions in a more statistically rigorous and affirmative manner than the classical testing with a simple reference line.
+3. using supremum-based simultaneous confidence bands, we can accommodate relevance testing into honest inference in the event study plot, enabling transparent, visual, and statistically valid and credible causal conclusions.
+
 
 ## Simultaneous Confidence Bands
 

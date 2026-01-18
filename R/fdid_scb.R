@@ -150,7 +150,7 @@ fdid_scb <- function(object=NULL,
     T_boot[b] <- min(abs(t_b))
   }
 
-  c_alpha <- quantile(T_boot, probs=1-scb.pre.alpha, type=6)
+  c_alpha <- quantile(T_boot, probs=1-2*scb.pre.alpha, type=6)
   scb_pre <- cbind(betahat_spline_pre, betahat_spline_pre+c_alpha*sqrt(diag_covhat_spline_pre), betahat_spline_pre-c_alpha*sqrt(diag_covhat_spline_pre))
 
   # compute supremum-based simultaneous confidence band for post-treatment periods by Kac-Rice formula

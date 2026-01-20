@@ -103,7 +103,7 @@ fdid_scb <- function(object=NULL,
 
   # compute spline interpolation
   len_t      <- length(betahat)
-  len_spline <- 5*len_t
+  len_spline <- 10*len_t
 
   timeVec_spline <- seq(min(timeVec), max(timeVec), length.out=len_spline)
   while (t0 %in% timeVec_spline) {len_spline <- len_spline+1; timeVec_spline <- seq(min(timeVec), max(timeVec), length.out=len_spline) }
@@ -164,7 +164,7 @@ fdid_scb <- function(object=NULL,
   betahat_splinefun_post  <- splinefun(x=timeVec_post, y=betahat_post, method="natural")
   covhat_spline_post      <- cov_spline(cov=covhat_post, grid=timeVec_post, n_intrpl=len_spline_post)
   diag_covhat_spline_post <- diag(covhat_spline_post)
-  hat.tau_post            <- ffscb::cov2tau_fun(covhat_spline_post)
+  hat.tau_post            <- ffscb::cov2tau_fun(covhat_spline_post) # there should be no zero in hat.tau_post
 
   if(is.null(df)){
       scb_post <- ffscb::confidence_band(x=betahat_spline_post, cov.x=covhat_spline_post, tau=hat.tau_post, type="FFSCB.z", conf.level=1-scb.post.alpha, n_int=1)
@@ -172,13 +172,29 @@ fdid_scb <- function(object=NULL,
       scb_post <- ffscb::confidence_band(x=betahat_spline_post, cov.x=covhat_spline_post, tau=hat.tau_post,  df=df, type="FFSCB.t", conf.level=1-scb.post.alpha, n_int=1)
   }
 
-  idx_pos          <- which(timeVec_spline>=t0)[1]
-  scb              <- rbind(scb_pre, 0, scb_post)
-  x                <- c(timeVec_spline[1:(idx_pos-1)],t0,timeVec_spline[idx_pos:len_spline])
+  # derive the spline functions
 
-  betahat_splinefun <- splinefun(x=timeVec, y=betahat, method="natural")
-  scb_ub_splinefun  <- splinefun(x=x, y=scb[,(ncol(scb)-1)], method="natural")
-  scb_lb_splinefun  <- splinefun(x=x, y=scb[,ncol(scb)], method="natural")
+  # idx_pos          <- which(timeVec_spline>=t0)[1]
+  # scb              <- rbind(scb_pre, 0, scb_post)
+  # x                <- c(timeVec_spline[1:(idx_pos-1)],t0,timeVec_spline[idx_pos:len_spline])
+  #
+  # betahat_splinefun <- splinefun(x=timeVec, y=betahat, method="natural")
+  # scb_ub_splinefun  <- splinefun(x=x, y=scb[,(ncol(scb)-1)], method="natural")
+  # scb_lb_splinefun  <- splinefun(x=x, y=scb[,ncol(scb)], method="natural")
+
+  timeVec_spline_pre <- timeVec_spline[timeVec_spline<=t0]
+  timeVec_spline_pre <- sort(c(timeVec_spline_pre[-length(timeVec_spline_pre)],t0))
+  scb_ub_splinefun_pre  <- splinefun(x=timeVec_spline_pre, y=scb_pre[,(ncol(scb_pre)-1)], method="natural")
+  scb_lb_splinefun_pre  <- splinefun(x=timeVec_spline_pre, y=scb_pre[,ncol(scb_pre)], method="natural")
+
+  timeVec_spline_post <- timeVec_spline[timeVec_spline>=t0]
+  timeVec_spline_post <- sort(c(timeVec_spline_post[-1],t0))
+  scb_ub_splinefun_post  <- splinefun(x=timeVec_spline_post, y=scb_post[,(ncol(scb_post)-1)], method="natural")
+  scb_lb_splinefun_post  <- splinefun(x=timeVec_spline_post, y=scb_post[,ncol(scb_post)], method="natural")
+
+  scb_ub_splinefun <- function(t) ifelse(t<=t0, scb_ub_splinefun_pre(t), scb_ub_splinefun_post(t))
+  scb_lb_splinefun <- function(t) ifelse(t<=t0, scb_lb_splinefun_pre(t), scb_lb_splinefun_post(t))
+  betahat_splinefun <- function(t) (scb_ub_splinefun(t)+scb_lb_splinefun(t))/2
 
   # final output
   final_output <- list(scb=list(betahat= betahat_splinefun,

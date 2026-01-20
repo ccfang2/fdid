@@ -25,7 +25,7 @@ devtools::install_github("ccfang2/fdid")
 
 ## Classical Event Study Plot
 
-We hereby use event study estimates from Gallagher (2014)[^3]. The following is the traditional event study plot displaying point-wise 95% confidence intervals.
+We hereby use event study estimates from Gallagher (2014)[^3]. The following is the traditional event study plot displaying pointwise 95% confidence intervals.
 
 ```r
 library(fdid)
@@ -49,13 +49,13 @@ However, classical event study plots---such as the one above---suffer from at le
 
  1. First, they typically display pointwise confidence intervals that do not account for multiple testing across event times.
  2. Second, and of particular practical importance, they give the impression that the parallel trends and no-anticipation assumptions can be validated in the pre-treatment period when showing insignificant pre-treatment estimates. However, this is a classical argument from ignorance as the failure to reject the null hypothesis of no pre-treatment effects (i.e. absence of differences in time trends or anticipatory effects) does not imply that the parallel trends and no-anticipation as- sumptions hold.
- 3. Third, and most importantly from a practical standpoint, honest inference methods—such as those developed by Rambachan and Roth (2023)[^4]—cannot be integrated into standard event study plots, limiting their usefulness for credible causal inference.
+ 3. Third, and equally important from a practical standpoint, honest inference methods—such as those developed by Rambachan and Roth (2023)[^4]—cannot be integrated into standard event study plots, limiting their usefulness for credible causal inference.
 
 We address these limitations by introducing a functional-data perspective on DiD. The key idea is to model the underlying time-series processes in continuous time—an assumption already implicit in many empirical DiD studies, where pointwise event-study estimates and confidence intervals are connected by straight lines across event times. Our estimator builds directly on standard panel-data structures and is pointwise identical to the classical panel estimator, making the approach straightforward to implement in empirical applications. We allow for both additional control variables and staggered treatment adoption.
 
 1. First, the Gaussian process result provides the foundation for constructing simultaneous confidence bands for the DiD parameter (i.e., the event-study coefficients) across the full continuum of event times. Compared to conventional pointwise inference, our approach offers a powerful and more credible alternative, explicitly accounting for the multiple-testing problem inherent in event-study analyses.
-2. Infimum-based simultaneous confidence bands enable formal validation of honest reference bands in the pre-treatment period via equivalence testing, allowing researchers to assess the plausibility of the parallel trends and no-anticipation assumptions in a rigorous statistical manner. 
-3. Supremum-based simultaneous confidence bands support honest inference in the post-treatment period through relevance testing, directly integrating existing approaches to honest DiD inference into the event-study framework. 
+2. Second, our infimum-based simultaneous confidence bands enable formal validation of honest reference bands in the pre-treatment period via equivalence testing, allowing researchers to assess the plausibility of the parallel trends and no-anticipation assumptions in a rigorous statistical manner. 
+3. Third, our supremum-based simultaneous confidence bands support honest inference in the post-treatment period through relevance testing, directly integrating existing approaches to honest DiD inference into the event-study framework. 
 
 
 ## Simultaneous Confidence Bands
@@ -71,7 +71,7 @@ plot(fdid_scb_est, pos.legend="bottom", scale.legend=1.4, note.pre=FALSE, ci.pos
 <img src="man/figures/plot_scb.png" width="80%">
 </p>
 
-We use the generic function `plot()` to derive the plot. In the post-treatment period, the supremum-based 95% simultaneous confidence band is wider than the classical 95% confidence intervals, because the point-wise intervals fail to take into account the multiple testing. The treatment effect is uniformly significant in the simultaneous causal inference using the classical reference line over event time [0, 9.7]. 
+We use the generic function `plot()` to derive the plot. In the post-treatment period, the supremum-based 95% simultaneous confidence band is wider than the classical 95% confidence intervals, because the pointwise intervals fail to take into account the multiple testing. The treatment effect is uniformly significant in the simultaneous causal inference using the classical reference line over event time [0, 9.7]. 
 
 > We do not perform validation in the pre-treatment period, because we only use the classical reference line in the simultaneous inference above.
 
@@ -81,18 +81,18 @@ To conduct honest inference using the plot above, we need to derive the honest r
 
 ## Example 1: Honest Reference Band under Violation of No-anticipation Assumption
 
-We now suppose that, after event time -2, there is an anticipation of treatment. We use control parameters $S_{u}=1.3$ and $S_{\ell}=2.3$ to derive the reference band (see equation (36) in Fang and Liebl (2026)[^1] for details on the control parameters).
+We now suppose that, after event time -2, there is an anticipation of treatment. We use control parameters $S_{u}=1.4$ and $S_{\ell}=2.3$ to derive the reference band (see equation (36) in Fang and Liebl (2026)[^1] for details on the control parameters).
 
 ``` r
 par(cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4, family="Times")
-plot(fdid_scb_est, ta.ts=-2, ta.s=c(1.3,2.3), pos.legend="bottom", scale.legend=1.4, ci.post=TRUE, ref.band.pre = TRUE)
+plot(fdid_scb_est, ta.ts=-2, ta.s=c(1.4,2.3), pos.legend="bottom", scale.legend=1.4, ci.post=TRUE, ref.band.pre = TRUE)
 ```
 
 <p align="center">
 <img src="man/figures/plot_scb_ta.png" width="80%">
 </p>
 
-With an anticipation after event time -2, one may see that the treatment effect is still uniformly significant over event time [0.4, 9,0]. With the given control parameters, the reference band can be validated at the significance level 5%, since the infimum-based 90% simultaneous confidence band strictly lies within the reference band in the pre-anticipation period (see Section 3.3 in Fang and Liebl (2026)[^1] for details). The result shows that the treatment effect in Gallagher(2014)[^3] is robust under the considered treatment anticipation.
+With an anticipation after event time -2, one may see that the treatment effect is still uniformly significant over event time [0.5, 9,0]. With the given control parameters, the reference band can be validated at the significance level 5%, since the infimum-based 90% simultaneous confidence band strictly lies within the reference band in the pre-anticipation period (see Section 3.3 in Fang and Liebl (2026)[^1] for details). The result shows that the treatment effect in Gallagher(2014)[^3] is robust under the considered treatment anticipation.
 
 ## Example 2: Honest Reference Band under Violation of Parallel Trends Assumption
 
@@ -107,7 +107,7 @@ plot(fdid_scb_est, frmtr.m=c(0.25,0.25), pos.legend="bottom", scale.legend=1.4, 
 <img src="man/figures/plot_scb_frmtr.png" width="80%">
 </p>
 
-In the plot above, although the reference band cannot be validated at the significance level 5% due to high data variability, it captures the visible upward pre-trend with a width comparable to that of the infimum-based band, providing substantive justification. Using this reference band, we find that the treatment effect is still uniformly significant over event time [0, 7.6]. The result shows that the treatment effect in Gallagher(2014)[^3] is robust under the considered violation of parallel trends assumption.
+In the plot above, although the reference band cannot be validated at the significance level 5% due to high data variability, it captures the visible upward pre-trend with a width comparable to that of the infimum-based band, providing substantive justification. Using this reference band, we find that the treatment effect is still uniformly significant over event time [0, 7.7]. The result shows that the treatment effect in Gallagher(2014)[^3] is robust under the considered violation of parallel trends assumption.
 
 > In some cases, validating a given reference band can be challenging, as doing so may require selecting a very wide reference band—thereby making subsequent testing in the post-treatment period overly conservative. Such non-rejection of the equivalence null hypothesis (see Section 3.3 in Fang and Liebl (2026)[^1] for details) often reflects limited sample size or high variability, and must be viewed as a lack of evidence against the null, not confirmation of it. Thus, a reference band failing to pass the validation can still be used for honest inference when its specification can be supported by domain-specific justification.
 

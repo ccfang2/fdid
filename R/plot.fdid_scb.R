@@ -128,7 +128,7 @@ plot.fdid_scb <- function(object,
     y_range     <- range(c(betahat_splinefun(x_vals), scb_ub_splinefun(x_vals), scb_lb_splinefun(x_vals)), na.rm=TRUE)
     y_range     <- c(y_range[1] - diff(y_range)*0.12, y_range[2] + diff(y_range)*0.08)
     y_range_fun <- function(x) y_range[1]+(y_range[2]-y_range[1])*(x-start)/(end-start)
-    curve(y_range_fun, from=start, to=end, lty=1,  xlab = "Event Time", ylab = "", col="white",...) #ylim =y_range,
+    curve(y_range_fun, from=start, to=end, lty=1,  xlab = "Event Time", ylab = "", col="white",n=500,...) #ylim =y_range,
 
     ShadeBetween <- function(x1, x2, f1, f2, ...) {polygon(c(x1, rev(x2)), c(f1, rev(f2)), ...)}
     band_grid    <- seq(start, end, length.out = 400)
@@ -150,7 +150,7 @@ plot.fdid_scb <- function(object,
       border = NA
       )
 
-    curve(betahat_splinefun, from=start, to=end, lty=1, add=TRUE, xlab = "Event Time", ylab = "", col="blue",...) #ylim =y_range,
+    curve(betahat_splinefun, from=start, to=end, lty=1, add=TRUE, xlab = "Event Time", ylab = "", col="blue", n=500, ...) #ylim =y_range,
     points(timeVec[which(timeVec<=t0)], betahat[which(timeVec<=t0)], pch = 16, col = rgb(0,0,1,alpha=0.4), cex=1)
     points(timeVec[which(timeVec>t0)], betahat[which(timeVec>t0)], pch = 16, col = "blue", cex=1)
 
@@ -503,7 +503,7 @@ plot.fdid_scb <- function(object,
     y_range     <- range(c(betahat_splinefun(x_vals), scb_ub_splinefun(x_vals), scb_lb_splinefun(x_vals)), na.rm=TRUE)
     y_range     <- c(y_range[1] - diff(y_range)*0.12, y_range[2] + diff(y_range)*0.08)
     y_range_fun <- function(x) y_range[1]+(y_range[2]-y_range[1])*(x-start)/(end-start)
-    curve(y_range_fun, from=start, to=end, lty=1,  xlab = "Event Time", ylab = "", col="white",...) #ylim =y_range,
+    curve(y_range_fun, from=start, to=end, lty=1,  xlab = "Event Time", ylab = "", col="white", n=500,...) #ylim =y_range,
 
     ShadeBetween <- function(x1, x2, f1, f2, ...) {polygon(c(x1, rev(x2)), c(f1, rev(f2)), ...)}
 
@@ -521,7 +521,7 @@ plot.fdid_scb <- function(object,
       border = NA
     )
 
-    curve(betahat_splinefun, from=start, to=end, lty=1, add=TRUE, xlab = "Event Time", ylab = "", col="blue",...)
+    curve(betahat_splinefun, from=start, to=end, lty=1, add=TRUE, xlab = "Event Time", ylab = "", col="blue",n=500,...)
     points(timeVec[which(timeVec<=t0)], betahat[which(timeVec<=t0)], pch = 16, col = rgb(0,0,1,alpha=0.4), cex=1)
     points(timeVec[which(timeVec>t0)], betahat[which(timeVec>t0)], pch = 16, col = "blue", cex=1)
 

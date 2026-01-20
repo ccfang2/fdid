@@ -92,7 +92,7 @@ plot(fdid_scb_est, ta.ts=-2, ta.s=c(1.4,2.3), pos.legend="bottom", scale.legend=
 <img src="man/figures/plot_scb_ta.png" width="80%">
 </p>
 
-With an anticipation after event time -2, one may see that the treatment effect is still uniformly significant over event time [0.5, 9,0]. With the given control parameters, the reference band can be validated at the significance level 5%, since the infimum-based 90% simultaneous confidence band strictly lies within the reference band in the pre-anticipation period (see Section 3.3 in Fang and Liebl (2026)[^1] for details). The result shows that the treatment effect in Gallagher(2014)[^3] is robust under the considered treatment anticipation.
+With an anticipation after event time -2, one may see that the treatment effect is still uniformly significant over event time [0.4, 9,0]. With the given control parameters, the reference band can be validated at the significance level 5%, since the infimum-based 90% simultaneous confidence band strictly lies within the reference band in the pre-anticipation period (see Section 3.3 in Fang and Liebl (2026)[^1] for details). The result shows that the treatment effect in Gallagher(2014)[^3] is robust under the considered treatment anticipation.
 
 ## Example 2: Honest Reference Band under Violation of Parallel Trends Assumption
 

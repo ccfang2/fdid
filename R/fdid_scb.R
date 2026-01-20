@@ -103,7 +103,7 @@ fdid_scb <- function(object=NULL,
 
   # compute spline interpolation
   len_t      <- length(betahat)
-  len_spline <- 10*len_t
+  len_spline <- 15*len_t
 
   timeVec_spline <- seq(min(timeVec), max(timeVec), length.out=len_spline)
   while (t0 %in% timeVec_spline) {len_spline <- len_spline+1; timeVec_spline <- seq(min(timeVec), max(timeVec), length.out=len_spline) }

@@ -9,6 +9,9 @@ template:
     base_font: {google: "Inter"}
     heading_font: {google: "Merriweather"}
     code_font: {google: "Fira Code"}
+  params:
+    article:
+      sidebar: false  # <<<<< disables article TOC/sidebar
 
 navbar:
   structure:
@@ -23,10 +26,10 @@ navbar:
       href: reference/index.html
     articles:
       text: "Articles"
-      href: articles/index.html
+      href: articles.html
     news:
       text: "News"
-      href: news/index.html
+      href: news.html
     github:
       icon: fa-github
       href: https://github.com/ccfang2/fdid

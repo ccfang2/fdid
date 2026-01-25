@@ -1,8 +1,11 @@
 <urlset xmlns = 'http://www.sitemaps.org/schemas/sitemap/0.9'>
 <url><loc>https://ccfang2.github.io/fdid/404.html</loc></url>
 <url><loc>https://ccfang2.github.io/fdid/LICENSE-text.html</loc></url>
+<url><loc>https://ccfang2.github.io/fdid/articles.html</loc></url>
 <url><loc>https://ccfang2.github.io/fdid/authors.html</loc></url>
 <url><loc>https://ccfang2.github.io/fdid/index.html</loc></url>
+<url><loc>https://ccfang2.github.io/fdid/news/index.html</loc></url>
+<url><loc>https://ccfang2.github.io/fdid/news.html</loc></url>
 <url><loc>https://ccfang2.github.io/fdid/reference/BCVdata.html</loc></url>
 <url><loc>https://ccfang2.github.io/fdid/reference/CCYdata.html</loc></url>
 <url><loc>https://ccfang2.github.io/fdid/reference/EventStudyPlot_Classical.html</loc></url>

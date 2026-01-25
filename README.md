@@ -22,6 +22,10 @@ We turn traditional event study plots into rigorous honest causal inference tool
 
 > Users can adjust their honest reference bands interactively via our [Shiny app](https://ccfang2.shinyapps.io/fdidHonestInference/).
 
+> STATA users can apply [Rcall](https://github.com/haghish/Rcall) function to use our R package in STATA. See [Articles] tab for details.
+
+> We will also make a STATA package for our project. Once we finish it, we will announce it in [News] tab.
+
 ## Installation
 
 You can install the development version of `fdid` from [GitHub](https://github.com/) with:

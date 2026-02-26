@@ -103,7 +103,7 @@ fdid_scb <- function(object=NULL,
 
   # compute spline interpolation
   len_t      <- length(betahat)
-  len_spline <- 15*len_t
+  len_spline <- 10*len_t #15*len_t
 
   timeVec_spline <- seq(min(timeVec), max(timeVec), length.out=len_spline)
   while (t0 %in% timeVec_spline) {len_spline <- len_spline+1; timeVec_spline <- seq(min(timeVec), max(timeVec), length.out=len_spline) }
@@ -132,7 +132,7 @@ fdid_scb <- function(object=NULL,
   covhat_spline_pre      <- cov_spline(cov=covhat_pre, grid=timeVec_pre, n_intrpl=len_spline_pre)
   diag_covhat_spline_pre <- diag(covhat_spline_pre)
 
-  B <- 500
+  B <- 300 #500
   T_boot <- numeric(B)
 
   set.seed(450)

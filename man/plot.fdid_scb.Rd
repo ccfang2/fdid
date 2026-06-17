@@ -8,7 +8,7 @@
   object,
   ta.ts = NULL,
   ta.s = NULL,
-  frmtr.m = NULL,
+  ftr.m = NULL,
   ref.band.pre = TRUE,
   note.pre = TRUE,
   note.post = TRUE,
@@ -23,11 +23,11 @@
 \arguments{
 \item{object}{an object of class \code{"fdid_scb"}. The object to be plotted.}
 
-\item{ta.ts}{a numeric value that indicates the time point based on which the sample estimates for treatment anticipation biases are computed. It should be less or equal to the time point after which units start responding to a future treatment. It is supposed to be greater than the minimal event time and no greater than t0 in \code{object}. If it is NULL, there is no anticipation.}
+\item{ta.ts}{a numeric value that indicates the last time point in the pre-anticipation periods. It should be smaller than the reference time period.}
 
-\item{ta.s}{a numeric vector of control parameters with length two for deriving the honest reference band under the violation of no-anticipation assumption. If NULL, the critical value \eqn{t_{1-\alpha/2, df}} or \eqn{z_{1-\alpha/2}} is applied with the same \eqn{\alpha} used for constructing the point-wise confidence intervals. If no treatment anticipation is defined in \code{ta.ts}, the value of \code{ta.s} is ignored.}
+\item{ta.s}{a numeric vector of control parameters with length two for deriving the honest reference band under the violation of no-anticipation assumption. If \code{ta.ts} is NULL, the value of \code{ta.s} is ignored. If \code{ta.ts} is not NULL, the value of \code{ta.s} cannot be NULL.}
 
-\item{frmtr.m}{a numeric vector of control parameters with length two for deriving the honest reference band under violation of the parallel trends assumption. The default is NULL.}
+\item{ftr.m}{a numeric vector of control parameters with length two for deriving the honest reference band under violation of the parallel trends assumption. The default is NULL.}
 
 \item{ref.band.pre}{a logical value. If TRUE, the reference band for pre-anticipation period is also plotted.}
 
@@ -64,10 +64,10 @@ plot(fdid_scb_est, scale.legend=1.4)
 title(ylab="Effects of Duty-to-Bargain Laws")
 
 ## honest inference under treatment anticipation
-plot(fdid_scb_est, ta.ts=-3, scale.legend=1.4)
+plot(fdid_scb_est, ta.ts=-3, ta.s=c(0.2,0.2), scale.legend=1.4)
 
 ## honest inference under violation of parallel trends assumption
-plot(fdid_scb_est, frmtr.m=c(0.2,0.2), scale.legend=1.4)
+plot(fdid_scb_est, ftr.m=c(0.2,0.2), scale.legend=1.4)
 }
 \references{
 Fang, C. and Liebl, D. (2026). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. \href{https://arxiv.org/abs/2512.06804}{arXiv:2512.06804}.

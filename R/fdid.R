@@ -6,22 +6,24 @@
 #' @param data a data frame in which the first variable should be the outcome variable, and the latter two variables are time and unit indices. The outcome variable should be numeric.
 #' @param treatment a data frame in which the first variable is the unit index; the second variable indicates the reference time, after which the treatment is given, for each unit.
 #' NA implies that the unit is never treated. All pre-determined covariates are placed afterwards. Covariates should be numeric.
+#' @param stagger.t0 a numeric value that indicates the single reference time point used for all treated subgroups in staggered adoption design.
 #'
-#' @return The \code{fdid} function returns a list which includes the estimates of event study coefficients and their covariance. In the output, the event time 0 is considered as the
-#' reference period. The output is an object of S3 class \code{"fdid"}.
+#' @return The \code{fdid} function returns a list which includes the estimates of event study coefficients and their covariance. In the output, the event time -1 is considered as the
+#' reference time. The output is an object of S3 class \code{"fdid"}.
 #' @import dplyr
 #' @export
 #' @references Fang, C. and Liebl, D. (2026). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. \href{https://arxiv.org/abs/2512.06804}{arXiv:2512.06804}.
 #'
 #' @seealso \link{tw_transf}, \link{fdid_scb}
-#'
 #' @examples
-#' data(simulated_stagger_example)
-#' fdid_est <- fdid(data=simulated_stagger_data, treatment=simulated_stagger_treatment)
+#' data(stagger_example)
+#' fdid_est <- fdid(data=stagger_data, treatment=stagger_treatment, stagger.t0=-1)
 #' plot(fdid_est$beta$coef[,2], fdid_est$beta$coef[,1], type="l",
 #'      xlab="Event Time", ylab=expression(hat(beta)), family="Times")
+#' abline(v=-1, lty=3)
 fdid <- function(data,
-                 treatment)
+                 treatment,
+                 stagger.t0)
   {
 
   options(warn=-1)
@@ -36,6 +38,8 @@ fdid <- function(data,
   if(!all(na.omit(unique(treatment$t0)) %in% unique(data$t))) stop("The reference time in the data frame 'treatment' should be among the time index in the data frame 'data'.")
   if(!all(na.omit(unique(treatment$t0)) > min(unique(data$t)) & na.omit(unique(treatment$t0)) < max(unique(data$t)))) stop("The reference time in the data frame 'treatment' should be greater/less than the min/max of time index in the data frame 'data'.")
   if(!(NA %in% unique(treatment$t0))) stop("There must be control units with t0=NA as defined in the data frame 'treatment'.")
+  if(!is.null(stagger.t0) && (!is.numeric(stagger.t0) || length(stagger.t0) != 1)) stop("The input 'stagger.t0' should be NULL or a numeric scalar.")
+  if(!(stagger.t0 %in% na.omit(unique(treatment$t0)))) stop("The input 'stagger.t0' should be among the 't0' choices in the data frame 'treatment'.")
 
   # join the two data frames
   data                <- data[order(data$i, data$t), ]
@@ -124,14 +128,15 @@ fdid <- function(data,
   if (length(t0_unique)==1) {
 
     # extract the output directly in non-staggered design with only one t0
-    fdid_nonstagger_list[[1]]$beta$coef[,"t"]     <- round(fdid_nonstagger_list[[1]]$beta$coef[,"t"]-t0_unique[1], 6)
+    # fdid_nonstagger_list[[1]]$beta$coef[,"t"]     <- round(fdid_nonstagger_list[[1]]$beta$coef[,"t"]- (t0_unique[1]+1), 6)
     colnames(fdid_nonstagger_list[[1]]$beta$coef) <- c("beta", "event_t")
-    final_output                                  <- append(fdid_nonstagger_list[[1]], list(t0=0, df=NULL))
+    final_output                                  <- append(fdid_nonstagger_list[[1]], list(t0=t0_unique[1], df=NULL))
 
   } else {
 
     # estimate beta in staggered design with multiple t0
-    beta_list      <- lapply(1:length(t0_unique), function(x) cbind(beta=fdid_nonstagger_list[[x]]$beta$coef[,"beta"], event_t= round(fdid_nonstagger_list[[x]]$beta$coef[,"t"]-t0_unique[x], 6)))
+    # beta_list      <- lapply(1:length(t0_unique), function(x) cbind(beta=fdid_nonstagger_list[[x]]$beta$coef[,"beta"], event_t= round(fdid_nonstagger_list[[x]]$beta$coef[,"t"]- (t0_unique[x]+1), 6)))
+    beta_list      <- lapply(1:length(t0_unique), function(x) cbind(beta=fdid_nonstagger_list[[x]]$beta$coef[,"beta"], event_t= round(fdid_nonstagger_list[[x]]$beta$coef[,"t"]-(t0_unique[x]-stagger.t0),6)     ))
     t_unique       <- unique(data_list[["NA"]][["t"]])
     event_t_list   <- sapply(beta_list, function(x) x[,"event_t"])
     event_t_unique <- sort(unique(as.vector(event_t_list)))

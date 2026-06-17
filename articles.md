@@ -26,33 +26,26 @@ STATA users can use [Rcall](https://github.com/haghish/Rcall) to run the functio
 		
 		```r
 		library(fdid)
-		data(Gdata)
-		Gdata$beta[,"event_t"] <- Gdata$beta[,"event_t"]- Gdata$t0 #Recenter the event time on 0
+		data(CDGSWdata)
 		
 		# Classical Event Study Plot
-		fdid_scb_est <- fdid_scb(beta=Gdata$beta, cov=Gdata$cov, t0=0)
+		fdid_scb_est <- fdid_scb(beta=CDGSWdata$beta, cov=CDGSWdata$cov, t0=CDGSWdata$t0)
 		
 		pdf("Classical_EventStudyPlot.pdf", width = 8, height = 6)
 		par(cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4, family="Times")
-		EventStudyPlot_Classical(fdid_scb_est, pos.legend="bottom", scale.legend=1.4)
+		EventStudyPlot_Classical(fdid_scb_est, pos.legend="top", scale.legend=1.4)
 		dev.off()
 		
 		# Simultaneous Confidence Bands
 		pdf("SCB.pdf", width = 8, height = 6)
 		par(cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4, family="Times")
-		plot(fdid_scb_est, pos.legend="bottom", scale.legend=1.4, note.pre=FALSE, ci.post=TRUE)
+		plot(fdid_scb_est, pos.legend="top", scale.legend=1.4, note.pre=FALSE, ci.post=FALSE)
 		dev.off()
 		
 		# Honest Reference Band under Violation of No-anticipation Assumption
 		pdf("SCB_NTA.pdf", width = 8, height = 6)
 		par(cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4, family="Times")
-		plot(fdid_scb_est, ta.ts=-2, ta.s=c(1.4,2.3), pos.legend="bottom", scale.legend=1.4, ci.post=TRUE, ref.band.pre = TRUE)
-		dev.off()
-		
-		# Honest Reference Band under Violation of Parallel Trends Assumption
-		pdf("SCB_PTA.pdf", width = 8, height = 6)
-		par(cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4, family="Times")
-		plot(fdid_scb_est, frmtr.m=c(0.25,0.25), pos.legend="bottom", scale.legend=1.4, ci.post=TRUE, ref.band.pre = TRUE)
+		plot(fdid_scb_est, ta.ts=-2, ta.s=c(1.5,1.8), pos.legend="top", scale.legend=1.4, ci.post=FALSE, ref.band.pre = TRUE)
 		dev.off()
 		```
 		+ Second, run `rcall script YourRScript.R` in your STATA.
@@ -64,11 +57,10 @@ STATA users can use [Rcall](https://github.com/haghish/Rcall) to run the functio
 		```r
 		rcall:
 		library(fdid)
-		data(Gdata)
-		Gdata\$beta[, "event_t"] <- Gdata\$beta[, "event_t"] - Gdata\$t0
-		fdid_scb_est <- fdid_scb(beta = Gdata\$beta, cov = Gdata\$cov, t0 = 0)
+		data(CDGSWdata)
+		fdid_scb_est <- fdid_scb(beta = CDGSWdata\$beta, cov = CDGSWdata\$cov, t0 = CDGSWdata\$t0)
 		par(cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4, family = "Times")
-		EventStudyPlot_Classical(fdid_scb_est, pos.legend = "bottom",scale.legend = 1.4)
+		EventStudyPlot_Classical(fdid_scb_est, pos.legend = "top",scale.legend = 1.4)
 		end
 		```
 		+ Second, you will see teh event study plot saved in your working directory.

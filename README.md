@@ -7,7 +7,6 @@
 ![GitHub R package version](https://img.shields.io/github/r-package/v/ccfang2/fdid?logo=R)
 ![GitHub Repo stars](https://img.shields.io/github/stars/ccfang2/fdid?style=social)
 
-
 The R package `fdid` allows users to implement the method proposed in Fang and Liebl (2026)[^1]. In this paper, we present a novel functional perspective on Difference-in-Differences (DiD) that allows for honest inference using event study plots under violations of parallel trends and/or no-anticipation assumptions. Specifically, we compute an infimum-based Simultaneous Confidence Band (SCB) in the pre-treatment period by parametric bootstrap, and a supremum-based SCB in the post-treatment period by the algorithm of Kac-Rice formula proposed in Liebl and Reimherr (2023)[^2]. Additionally, by contrast to classical reference line in traditional event study plots, we derive an honest reference band, accounting for potential biases from the violation of parallel trends or no-anticipation assumption, when making inference.
 
 We turn traditional event study plots into rigorous honest causal inference tools by the following:
@@ -37,23 +36,20 @@ devtools::install_github("ccfang2/fdid")
 
 ## Classical Event Study Plot
 
-We hereby use event study estimates from Gallagher (2014)[^3]. The following is the traditional event study plot displaying pointwise 95% confidence intervals.
+We hereby use event study estimates from Coskun et al. (2026)[^3]. The following is the traditional event study plot displaying pointwise 95% confidence intervals.
 
 ```r
 library(fdid)
-data(Gdata)
-Gdata$beta[,"event_t"] <- Gdata$beta[,"event_t"]- Gdata$t0 #Recenter the event time on 0
+data(CDGSWdata)
 
-fdid_scb_est <- fdid_scb(beta=Gdata$beta, cov=Gdata$cov, t0=0)
+fdid_scb_est <- fdid_scb(beta=CDGSWdata$beta, cov=CDGSWdata$cov, t0=CDGSWdata$t0)
 par(cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4, family="Times")
-EventStudyPlot_Classical(fdid_scb_est, pos.legend="bottom", scale.legend=1.4)
+EventStudyPlot_Classical(fdid_scb_est, pos.legend="top", scale.legend=1.4)
 ```
 
 <p align="center">
 <img src="man/figures/plot_ci.png" width="80%">
 </p>
-
-> In the original dataset `Gdata` from Gallagher (2014)[^3], they already consider a potential anticipation starting after event time -1, which is used as the reference time point. However, in our approach, we suggest using event time 0 as the reference time point, and then derive the honest reference band that considers potential violation of no-anticipation or parallel trends assumption. To accommodate our approach, we thus recenter the event time on 0 in the dataset `Gdata`.
 
 > The function `fdid_scb()` is used to compute SCBs from using the estimates of event study coefficients, covariances and reference time point, which will be used in the honest causal inference. 
 
@@ -76,50 +72,35 @@ We can therefore transform the traditional event study plot into a rigorous hone
 
 ``` r
 par(cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4, family="Times")
-plot(fdid_scb_est, pos.legend="bottom", scale.legend=1.4, note.pre=FALSE, ci.post=TRUE)
+plot(fdid_scb_est, pos.legend="top", scale.legend=1.4, note.pre=FALSE, ci.post=FALSE)
 ```
 
 <p align="center">
 <img src="man/figures/plot_scb.png" width="80%">
 </p>
 
-We use the generic function `plot()` to derive the plot. In the post-treatment period, the supremum-based 95% SCB is wider than the classical 95% confidence intervals, because the pointwise intervals fail to take into account the multiple testing. The treatment effect is uniformly significant in the simultaneous causal inference using the classical reference line over event time [0, 9.7]. 
+We use the generic function `plot()` to derive the plot. In the post-treatment period, the supremum-based 95% SCB is wider than the classical 95% confidence intervals, because the pointwise intervals fail to take into account the multiple testing. The treatment effect is uniformly significant in the simultaneous causal inference using the classical reference line over event time [13.5, 44]. 
 
 > Above, we do not perform validation in the pre-treatment period, because we only use the classical reference line in the simultaneous inference here.
 
 > If you do not have estimates of event study coefficients and covariances, you may use our function `fdid()` to estimate them from using your original data. Our function allows the estimation under both non-staggered and staggered DiD designs. In particularly, we consider the negative weighting problem of estimating event study coefficients under staggered designs and use carefully chosen non-negative weights to sum up estimates from different treatment subgroups.
 
-To conduct honest inference using the plot above, we need to derive the honest reference band under violations of identification assumptions. Below are two examples of deriving honest reference band under the violation of no-anticipation and parallel trends assumption respectively.
+To conduct honest inference using the plot above, we need to derive the honest reference band under violations of identification assumptions. Below is an example of deriving honest reference band under the violation of no-anticipation.
 
-## Example 1: Honest Reference Band under Violation of No-anticipation Assumption
+## Example: Honest Reference Band under Violation of No-anticipation Assumption
 
-We now suppose that, after event time -2, there is an anticipation of treatment. We use control parameters $S_{u}=1.4$ and $S_{\ell}=2.3$ to derive the reference band (see equation (36) in Fang and Liebl (2026)[^1] for details on the control parameters).
+We now suppose that, after event time -2, there is an anticipation of treatment. We use control parameters $S_{u}=1.5$ and $S_{\ell}=1.8$ to derive the reference band (see equation (36) in Fang and Liebl (2026)[^1] for details on the control parameters).
 
 ``` r
 par(cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4, family="Times")
-plot(fdid_scb_est, ta.ts=-2, ta.s=c(1.4,2.3), pos.legend="bottom", scale.legend=1.4, ci.post=TRUE, ref.band.pre = TRUE)
+plot(fdid_scb_est, ta.ts=-2, ta.s=c(1.5,1.8), pos.legend="top", scale.legend=1.4, ci.post=FALSE, ref.band.pre = TRUE)
 ```
 
 <p align="center">
 <img src="man/figures/plot_scb_ta.png" width="80%">
 </p>
 
-With an anticipation after event time -2, one may see that the treatment effect is still uniformly significant over event time [0.4, 9,0]. With the given control parameters, the reference band can be validated at the significance level 5%, since the infimum-based 90% SCB strictly lies within the reference band in the pre-anticipation period (see Section 3.3 in Fang and Liebl (2026)[^1] for details). The result shows that the treatment effect in Gallagher(2014)[^3] is robust under the considered treatment anticipation.
-
-## Example 2: Honest Reference Band under Violation of Parallel Trends Assumption
-
-We now suppose that, there is differential trend. We use control parameters $M_{u}=0.25$ and $M_{\ell}=0.25$ to derive the reference band (see equation (37) in Fang and Liebl (2026)[^1] for details on the control parameters).
-
-``` r
-par(cex.axis = 1.4, cex.lab = 1.4, cex.main = 1.4, family="Times")
-plot(fdid_scb_est, frmtr.m=c(0.25,0.25), pos.legend="bottom", scale.legend=1.4, ci.post=TRUE, ref.band.pre = TRUE)
-```
-
-<p align="center">
-<img src="man/figures/plot_scb_frmtr.png" width="80%">
-</p>
-
-In the plot above, although the reference band cannot be validated at the significance level 5% due to high data variability, it captures the visible upward pre-trend with a width comparable to that of the infimum-based band, providing substantive justification. Using this reference band, we find that the treatment effect is still uniformly significant over event time [0, 7.7]. The result shows that the treatment effect in Gallagher(2014)[^3] is robust under the considered violation of parallel trends assumption.
+With an anticipation after event time -2, one may see that the treatment effect is still uniformly significant over event time [23.1, 44]. With the given control parameters, the reference band can be validated at the significance level 5%, since the infimum-based 90% SCB strictly lies within the reference band in the pre-anticipation period (see Section 3.3 in Fang and Liebl (2026)[^1] for details). The result shows that the treatment effect in Coskun et al. (2026)[^3] is robust under the considered treatment anticipation.
 
 > In some cases, validating a given reference band can be challenging, as doing so may require selecting a very wide reference band—thereby making subsequent testing in the post-treatment period overly conservative. Such non-rejection of the equivalence null hypothesis (see Section 3.3 in Fang and Liebl (2026)[^1] for details) often reflects limited sample size or high variability, and must be viewed as a lack of evidence against the null, not confirmation of it. Thus, a reference band failing to pass the validation can still be used for honest inference when its specification can be supported by domain-specific justification.
 
@@ -131,6 +112,6 @@ Chencheng Fang, Email: [ccfang[at]uni-bonn.de](mailto:ccfang@uni-bonn.de), Hausd
 
 [^1]: Fang, C. and Liebl, D. (2026). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. [arXiv:2512.06804](https://arxiv.org/abs/2512.06804).
 [^2]: Liebl, D. and M. Reimherr (2023). Fast and fair simultaneous confidence bands for functional parameters. Journal of the Royal Statistical Society Series B: Statistical Methodology 85(3), 842–868.
-[^3]: Gallagher, J. (2014). Learning about an Infrequent Event: Evidence from Flood Insurance Take-Up in the United States. American Economic Journal: Applied Economics 6(3), 206–33.
+[^3]: Coskun, S., W. Dauth, H. Gartner, M. Stops, and E. Weber (2026). Working from home increases work–home distances. Journal of Urban Economics 152, 103832.
 [^4]: Rambachan, A. and J. Roth (2023). A more credible approach to parallel trends. The Review
 of Economic Studies 90 (5), 2555–2591.

@@ -55,6 +55,10 @@ EventStudyPlot_Classical <- function(object,
     arrows(timeVec, ci_lower, timeVec, ci_upper, angle = 90, code = 3, length = 0.025, col = "blue4")
     segments(x0=timeVec[1],y0=0,x1=timeVec[length(timeVec)],y1=0, lty=3, lwd=4, col="red" )
 
+    t1<-timeVec[which(timeVec==t0)+1]
+    #segments(x0=(t0+t1)/2, y0=y_range[1], x1=(t0+t1)/2, y1=y_range[2], lty=5, col="blue4")
+    abline(v=(t0+t1)/2, lty=3, col="blue4", lwd=4)
+
     # write a legend for the plot
     if(!is.null(pos.legend)) {
         xlim <- par("usr")[1:2]

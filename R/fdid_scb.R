@@ -1,4 +1,4 @@
-#' Compute simultaneous confidence bands for event study coefficients in functional DiD framework
+#' Compute simultaneous confidence bands for event study coefficients in a functional DiD framework
 #' @description The \code{fdid_scb} function is used to compute simultaneous confidence bands for event study coefficients in a functional
 #' framework. Specifically, we compute an infimum-based simultaneous confidence band in pre-treatment period by parametric bootstrap, and a supremum-based
 #' simultaneous confidence band in post-treatment period by an algorithm of Kac-Rice formula proposed in \href{https://academic.oup.com/jrsssb/article/85/3/842/7133768}{Liebl and Reimherr (2023)}.
@@ -31,11 +31,7 @@
 #'
 #' @examples
 #' data(LWdata)
-#' fdid_scb_est1 <- fdid_scb(beta=LWdata$beta, cov=LWdata$cov, t0=LWdata$t0)
-#'
-#' data(simulated_stagger_example)
-#' fdid_est2 <- fdid(data=simulated_stagger_data, treatment=simulated_stagger_treatment)
-#' fdid_scb_est2 <- fdid_scb(object=fdid_est2)
+#' fdid_scb_est <- fdid_scb(beta=LWdata$beta, cov=LWdata$cov, t0=LWdata$t0)
 fdid_scb <- function(object=NULL,
                      beta=NULL,
                      cov=NULL,
@@ -101,35 +97,15 @@ fdid_scb <- function(object=NULL,
     ci_lower <- betahat-qt(p=1-ci.alpha/2,df=df)*sqrt(diag(covhat))
   }
 
-  # compute spline interpolation
-  len_t      <- length(betahat)
-  len_spline <- 10*len_t #15*len_t
-
-  timeVec_spline <- seq(min(timeVec), max(timeVec), length.out=len_spline)
-  while (t0 %in% timeVec_spline) {len_spline <- len_spline+1; timeVec_spline <- seq(min(timeVec), max(timeVec), length.out=len_spline) }
-
-  # betahat_spline    <- spline(x=timeVec, y=betahat, n=len_spline, method="natural")$y
-  # betahat_splinefun <- splinefun(x=timeVec, y=betahat, method="natural")
-  # covhat_spline     <- cov_spline(cov=covhat, grid=timeVec, n_intrpl=len_spline)
-
-  # if (any(is.na(covhat))) {
-  #   covhat_spline <- apply(covhat, 2, function(col) { obs_idx <- !is.na(col); obs_event_t <- timeVec[obs_idx]; obs_col <- col[obs_idx]; spline_fit <- spline(obs_event_t, obs_col, xout = timeVec_spline, method = "natural")$y; spline_fit[timeVec_spline > max(obs_event_t) | timeVec_spline < min(obs_event_t)] <- NA; return(spline_fit)})
-  #   covhat_spline <- apply(covhat_spline, 1, function(row) { obs_idx <- !is.na(row); obs_event_t <- timeVec[obs_idx]; obs_row <- row[obs_idx]; spline_fit <- spline(obs_event_t, obs_row, xout = timeVec_spline, method = "natural")$y; spline_fit[timeVec_spline > max(obs_event_t) | timeVec_spline < min(obs_event_t)] <- NA; return(spline_fit)})
-  # } else{
-  #   covhat_spline <- apply(covhat, 2, function(col) spline(x=timeVec, y=col, n=len_spline, method="natural")$y)
-  #   covhat_spline <- apply(covhat_spline, 1, function(row) spline(x=timeVec, y=row, n=len_spline, method="natural")$y)
-  # }
-
   # compute infimum-based simultaneous confidence band for pre-treatment periods via parametric bootstrapping
   timeVec_pre     <- timeVec[which(timeVec<=t0)]
   betahat_pre     <- betahat[which(timeVec<=t0)]
   covhat_pre      <- covhat[which(timeVec<=t0), which(timeVec<=t0)]
   diag_covhat_pre <- diag(covhat_pre)
-  len_spline_pre  <- sum(timeVec_spline<=t0)
 
-  betahat_spline_pre     <- spline(x=timeVec_pre, y=betahat_pre, n=len_spline_pre, method="natural")$y
+  betahat_spline_pre     <- spline(x=timeVec_pre, y=betahat_pre, n=7*length(timeVec_pre), method="natural")$y
   betahat_splinefun_pre  <- splinefun(x=timeVec_pre, y=betahat_pre, method="natural")
-  covhat_spline_pre      <- cov_spline(cov=covhat_pre, grid=timeVec_pre, n_intrpl=len_spline_pre)
+  covhat_spline_pre      <- cov_spline(cov=covhat_pre, grid=timeVec_pre, n_intrpl=7*length(timeVec_pre))
   diag_covhat_spline_pre <- diag(covhat_spline_pre)
 
   B <- 300 #500
@@ -154,15 +130,15 @@ fdid_scb <- function(object=NULL,
   scb_pre <- cbind(betahat_spline_pre, betahat_spline_pre+c_alpha*sqrt(diag_covhat_spline_pre), betahat_spline_pre-c_alpha*sqrt(diag_covhat_spline_pre))
 
   # compute supremum-based simultaneous confidence band for post-treatment periods by Kac-Rice formula
-  timeVec_post     <- timeVec[which(timeVec>=t0)]
-  betahat_post     <- betahat[which(timeVec>=t0)]
-  covhat_post      <- covhat[which(timeVec>=t0), which(timeVec>=t0)]
+  # leave the first interval after the reference period empty
+  timeVec_post     <- timeVec[which(timeVec>=timeVec[which(timeVec==t0)+1])]
+  betahat_post     <- betahat[which(timeVec>=timeVec[which(timeVec==t0)+1])]
+  covhat_post      <- covhat[which(timeVec>=timeVec[which(timeVec==t0)+1]), which(timeVec>=timeVec[which(timeVec==t0)+1])]
   diag_covhat_post <- diag(covhat_post)
-  len_spline_post  <- sum(timeVec_spline>=t0)
 
-  betahat_spline_post     <- spline(x=timeVec_post, y=betahat_post, n=len_spline_post, method="natural")$y
+  betahat_spline_post     <- spline(x=timeVec_post, y=betahat_post, n=7*length(timeVec_post), method="natural")$y
   betahat_splinefun_post  <- splinefun(x=timeVec_post, y=betahat_post, method="natural")
-  covhat_spline_post      <- cov_spline(cov=covhat_post, grid=timeVec_post, n_intrpl=len_spline_post)
+  covhat_spline_post      <- cov_spline(cov=covhat_post, grid=timeVec_post, n_intrpl=7*length(timeVec_post))
   diag_covhat_spline_post <- diag(covhat_spline_post)
   hat.tau_post            <- ffscb::cov2tau_fun(covhat_spline_post) # there should be no zero in hat.tau_post
 
@@ -173,27 +149,14 @@ fdid_scb <- function(object=NULL,
   }
 
   # derive the spline functions
+  scb_ub_splinefun_pre  <- splinefun(x=seq(timeVec_pre[1], t0, len=7*length(timeVec_pre)), y=scb_pre[,(ncol(scb_pre)-1)], method="natural")
+  scb_lb_splinefun_pre  <- splinefun(x=seq(timeVec_pre[1], t0, len=7*length(timeVec_pre)), y=scb_pre[,ncol(scb_pre)], method="natural")
 
-  # idx_pos          <- which(timeVec_spline>=t0)[1]
-  # scb              <- rbind(scb_pre, 0, scb_post)
-  # x                <- c(timeVec_spline[1:(idx_pos-1)],t0,timeVec_spline[idx_pos:len_spline])
-  #
-  # betahat_splinefun <- splinefun(x=timeVec, y=betahat, method="natural")
-  # scb_ub_splinefun  <- splinefun(x=x, y=scb[,(ncol(scb)-1)], method="natural")
-  # scb_lb_splinefun  <- splinefun(x=x, y=scb[,ncol(scb)], method="natural")
+  scb_ub_splinefun_post  <- splinefun(x=seq(timeVec_post[1], timeVec_post[length(timeVec_post)], len=7*length(timeVec_post)), y=scb_post[,(ncol(scb_post)-1)], method="natural")
+  scb_lb_splinefun_post  <- splinefun(x=seq(timeVec_post[1], timeVec_post[length(timeVec_post)], len=7*length(timeVec_post)), y=scb_post[,ncol(scb_post)], method="natural")
 
-  timeVec_spline_pre <- timeVec_spline[timeVec_spline<=t0]
-  timeVec_spline_pre <- sort(c(timeVec_spline_pre[-length(timeVec_spline_pre)],t0))
-  scb_ub_splinefun_pre  <- splinefun(x=timeVec_spline_pre, y=scb_pre[,(ncol(scb_pre)-1)], method="natural")
-  scb_lb_splinefun_pre  <- splinefun(x=timeVec_spline_pre, y=scb_pre[,ncol(scb_pre)], method="natural")
-
-  timeVec_spline_post <- timeVec_spline[timeVec_spline>=t0]
-  timeVec_spline_post <- sort(c(timeVec_spline_post[-1],t0))
-  scb_ub_splinefun_post  <- splinefun(x=timeVec_spline_post, y=scb_post[,(ncol(scb_post)-1)], method="natural")
-  scb_lb_splinefun_post  <- splinefun(x=timeVec_spline_post, y=scb_post[,ncol(scb_post)], method="natural")
-
-  scb_ub_splinefun <- function(t) ifelse(t<=t0, scb_ub_splinefun_pre(t), scb_ub_splinefun_post(t))
-  scb_lb_splinefun <- function(t) ifelse(t<=t0, scb_lb_splinefun_pre(t), scb_lb_splinefun_post(t))
+  scb_ub_splinefun <- function(t) ifelse(t<=t0, scb_ub_splinefun_pre(t), ifelse(t>= timeVec_post[1], scb_ub_splinefun_post(t), NA))
+  scb_lb_splinefun <- function(t) ifelse(t<=t0, scb_lb_splinefun_pre(t), ifelse(t>= timeVec_post[1], scb_lb_splinefun_post(t), NA))
   betahat_splinefun <- function(t) (scb_ub_splinefun(t)+scb_lb_splinefun(t))/2
 
   # final output

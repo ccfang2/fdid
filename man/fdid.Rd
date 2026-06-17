@@ -4,17 +4,19 @@
 \alias{fdid}
 \title{Estimate the event study coefficients and the covariance matrix}
 \usage{
-fdid(data, treatment)
+fdid(data, treatment, stagger.t0)
 }
 \arguments{
 \item{data}{a data frame in which the first variable should be the outcome variable, and the latter two variables are time and unit indices. The outcome variable should be numeric.}
 
 \item{treatment}{a data frame in which the first variable is the unit index; the second variable indicates the reference time, after which the treatment is given, for each unit.
 NA implies that the unit is never treated. All pre-determined covariates are placed afterwards. Covariates should be numeric.}
+
+\item{stagger.t0}{a numeric value that indicates the single reference time point used for all treated subgroups in staggered adoption design.}
 }
 \value{
-The \code{fdid} function returns a list which includes the estimates of event study coefficients and their covariance. In the output, the event time 0 is considered as the
-reference period. The output is an object of S3 class \code{"fdid"}.
+The \code{fdid} function returns a list which includes the estimates of event study coefficients and their covariance. In the output, the event time -1 is considered as the
+reference time. The output is an object of S3 class \code{"fdid"}.
 }
 \description{
 The \code{fdid} function is used to estimate the event study coefficients and the covariance matrix in non-staggered or staggered adoption design.
@@ -22,10 +24,11 @@ In staggered design, our estimation does not suffer from the so-called negative 
 estimates from each subgroup. See \href{https://arxiv.org/abs/2512.06804}{Fang and Liebl (2026)} for detailed estimation method.
 }
 \examples{
-data(simulated_stagger_example)
-fdid_est <- fdid(data=simulated_stagger_data, treatment=simulated_stagger_treatment)
+data(stagger_example)
+fdid_est <- fdid(data=stagger_data, treatment=stagger_treatment, stagger.t0=-1)
 plot(fdid_est$beta$coef[,2], fdid_est$beta$coef[,1], type="l",
      xlab="Event Time", ylab=expression(hat(beta)), family="Times")
+abline(v=-1, lty=3)
 }
 \references{
 Fang, C. and Liebl, D. (2026). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. \href{https://arxiv.org/abs/2512.06804}{arXiv:2512.06804}.

@@ -2,7 +2,7 @@
 % Please edit documentation in R/fdid_scb.R
 \name{fdid_scb}
 \alias{fdid_scb}
-\title{Compute simultaneous confidence bands for event study coefficients in functional DiD framework}
+\title{Compute simultaneous confidence bands for event study coefficients in a functional DiD framework}
 \usage{
 fdid_scb(
   object = NULL,
@@ -50,11 +50,7 @@ simultaneous confidence band in post-treatment period by an algorithm of Kac-Ric
 }
 \examples{
 data(LWdata)
-fdid_scb_est1 <- fdid_scb(beta=LWdata$beta, cov=LWdata$cov, t0=LWdata$t0)
-
-data(simulated_stagger_example)
-fdid_est2 <- fdid(data=simulated_stagger_data, treatment=simulated_stagger_treatment)
-fdid_scb_est2 <- fdid_scb(object=fdid_est2)
+fdid_scb_est <- fdid_scb(beta=LWdata$beta, cov=LWdata$cov, t0=LWdata$t0)
 }
 \references{
 Fang, C. and Liebl, D. (2026). Making Event Study Plots Honest: A Functional Data Approach to Causal Inference. \href{https://arxiv.org/abs/2512.06804}{arXiv:2512.06804}.

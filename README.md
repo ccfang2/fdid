@@ -19,7 +19,7 @@ We turn traditional event study plots into rigorous honest causal inference tool
 	+ A supremum-based SCB allows us to test whether causal effects are significantly different from the (validated) honest reference band.
 	+ Look for regions where the supremum-based SCB does not overlap with the reference band (see "relevance testing" in Section 3.1, Fang and Liebl (2026)[^1]).
 
-> Users can adjust their honest reference bands interactively via our [Shiny app](https://ccfang2.shinyapps.io/fdidHonestInference/).
+> Users can adjust their honest reference bands interactively via our [Shiny app](https://ccfang2.shinyapps.io/fdidHonestInference/) (Currently disabled, but will be re-released in July 2026).
 
 > STATA users can apply [Rcall](https://github.com/haghish/Rcall) function to use our R package in STATA. See [Articles] tab for details.
 
